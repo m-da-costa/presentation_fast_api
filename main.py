@@ -1,77 +1,60 @@
 """
-SentimentAPI — demo de FastAPI para a aula da PUC.
+ProdutosAPI — a stack inteira, servida por uma API
+==================================================
 
-Uma API que analisa o sentimento de avaliações de filmes em português.
-O modelo de "IA" é um classificador baseado em léxico, escrito em Python
-puro — para que qualquer iniciante consiga ler TODAS as linhas.
+**Esta é a nossa parte da aula: FastAPI.**
+
+Os módulos anteriores (NumPy, Pandas, Matplotlib/Seaborn, APIs, requests)
+não ficam para trás — eles entram AQUI. Cada camada da pilha vira um
+endpoint, e é assim que este arquivo ensina FastAPI: mostrando que o
+framework é onde o trabalho de dados **encontra o mundo**.
+
+    NumPy      →  /numpy/vetorizacao   ·  /numpy/estatisticas
+    Pandas     →  /produtos            ·  /produtos/por-categoria
+    Matplotlib →  /produtos/grafico
+    Análise    →  /produtos/media      ·  /estatisticas
+
+Uma análise que vive só no notebook não é usada por ninguém. Publicada
+aqui, ela vira insumo para um site, um painel, um aplicativo ou outro
+time — inclusive as previsões de um modelo de Machine Learning.
 
 Como rodar (na pasta deste arquivo):
 
-    pip install fastapi uvicorn
-    uvicorn main:app --reload
+    uv run uvicorn main:app --reload
 
 Depois abra no navegador:
 
-    http://127.0.0.1:8000       -> a API
-    http://127.0.0.1:8000/docs  -> documentação interativa (Swagger UI)
-    http://127.0.0.1:8000/redoc -> documentação alternativa (ReDoc)
+    http://127.0.0.1:8000        -> a API
+    http://127.0.0.1:8000/docs   -> documentação interativa (Swagger UI)
+    http://127.0.0.1:8000/redoc  -> documentação alternativa (ReDoc)
 
 Repare: esta docstring que você está lendo aparece na página /docs.
-É o primeiro exemplo do poder do FastAPI — a documentação se escreve sozinha
-a partir do seu código.
+É o primeiro exemplo do poder do FastAPI — a documentação se escreve
+sozinha a partir do seu código.
 """
 
 # ──────────────────────────────────────────────────────────────────────
-# 1. IMPORTS E O "CÉREBRO" DA APLICAÇÃO (a nossa mini-IA)
+# 1. IMPORTS E OS DADOS
 # ──────────────────────────────────────────────────────────────────────
 
-from datetime import datetime, timezone
+import io
+from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
-from pydantic import BaseModel, Field
+import matplotlib
 
-# Um classificador de sentimentos por léxico: cada palavra conhecida tem um
-# peso. Somamos os pesos do texto e decidimos o sentimento pela pontuação.
-# Nada de scikit-learn — o objetivo é que um iniciante entenda 100% da "IA".
-LEXICO: dict[str, int] = {
-    # positivas
-    "ótimo": 2, "otimo": 2, "excelente": 3, "adoro": 3, "adorei": 3,
-    "amei": 3, "maravilhoso": 3, "incrível": 2, "incrivel": 2,
-    "divertido": 1, "recomendo": 2, "emocionante": 2, "lindo": 2,
-    "perfeito": 3, "obrigado": 1, "melhor": 1, "genial": 2, "top": 1,
-    # negativas
-    "horrível": -3, "horrivel": -3, "péssimo": -3, "pessimo": -3,
-    "odiei": -3, "odeio": -3, "chato": -2, "cansativo": -2,
-    "perdi": -1, "tempo": -1, "clichê": -1, "cliche": -1,
-    "ruim": -2, "pior": -2, "lamentável": -3, "lamentavel": -3,
-    "decepcionante": -2, "não": -1, "nao": -1,
-}
+# Num servidor web não há tela para desenhar. "Agg" é o motor que desenha
+# direto na memória — e precisa ser escolhido ANTES de importar o resto.
+matplotlib.use("Agg")
 
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+from fastapi import FastAPI, HTTPException, Query, Response  # noqa: E402
+from matplotlib.backends.backend_agg import FigureCanvasAgg  # noqa: E402
+from matplotlib.figure import Figure  # noqa: E402
+from pydantic import BaseModel, Field  # noqa: E402
 
-def classificar(texto: str) -> dict:
-    """Roda o 'modelo': tokeniza, soma os pesos do léxico e devolve o veredito."""
-    palavras = texto.lower().replace("!", " ").replace(",", " ").split()
-    encontradas = [
-        (p, LEXICO[p]) for p in palavras if p in LEXICO
-    ]
-    pontuacao = sum(peso for _, peso in encontradas)
-
-    if pontuacao > 0:
-        sentimento = "positivo"
-    elif pontuacao < 0:
-        sentimento = "negativo"
-    else:
-        sentimento = "neutro"
-
-    total = sum(abs(peso) for _, peso in encontradas)
-    confianca = min(0.99, 0.5 + 0.1 * total)  # cresce com cada palavra reconhecida
-
-    return {
-        "sentimento": sentimento,
-        "pontuacao": pontuacao,
-        "confianca": round(confianca, 2),
-        "palavras_encontradas": encontradas,
-    }
+# O mesmo CSV que o módulo 02 leu. O dado percorre a pilha inteira.
+DADOS = Path(__file__).parent / "lab" / "dados" / "produtos.csv"
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -79,53 +62,78 @@ def classificar(texto: str) -> dict:
 # ──────────────────────────────────────────────────────────────────────
 
 
-class AvaliacaoEntrada(BaseModel):
-    """O que o cliente ENVIA ao criar uma avaliação.
+class ProdutoEntrada(BaseModel):
+    """O que o cliente ENVIA ao cadastrar um produto.
 
-    Cada anotação (Field, description, ge, le) vira validação automática
-    E documentação automática. Envie nota=42 e a API responde 422 sozinha.
+    Cada anotação (Field, description, ge, min_length) vira validação
+    automática E documentação automática. Envie preco = -5 e a API
+    responde 422 sozinha — sem você escrever um único `if`.
     """
 
-    texto: str = Field(
+    produto: str = Field(
         ...,
-        min_length=3,
-        max_length=500,
-        description="O texto da avaliação do filme",
-        examples=["Adorei o filme, emocionante do início ao fim!"],
-    )
-    nota: int = Field(
-        ...,
-        ge=1,
-        le=5,
-        description="Nota de 1 a 5 estrelas",
-        examples=[5],
-    )
-    autor: str | None = Field(
-        default=None,
+        min_length=2,
         max_length=60,
-        description="Quem escreveu (opcional)",
-        examples=["Maria"],
+        description="Nome do produto",
+        examples=["Teclado"],
+    )
+    categoria: str = Field(
+        ...,
+        min_length=2,
+        max_length=40,
+        description="Categoria do produto",
+        examples=["Acessórios"],
+    )
+    preco: float = Field(
+        ...,
+        gt=0,
+        le=1_000_000,
+        description="Preço em reais (maior que zero)",
+        examples=[90.0],
+    )
+    vendas: int = Field(
+        default=0,
+        ge=0,
+        description="Unidades vendidas",
+        examples=[210],
     )
 
 
-class AvaliacaoResposta(AvaliacaoEntrada):
-    """O que a API DEVOLVE: a avaliação + o resultado da análise de sentimento."""
+class ProdutoResposta(ProdutoEntrada):
+    """O que a API DEVOLVE: o produto cadastrado + o que ela calculou."""
 
-    id: int = Field(..., description="Identificador único da avaliação")
-    criada_em: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        description="Momento do cadastro (UTC)",
-    )
-    sentimento: str = Field(..., description="positivo | negativo | neutro")
-    confianca: float = Field(..., ge=0, le=1, description="Confiança do modelo")
+    id: int = Field(..., description="Identificador único do produto")
+    faturamento: float = Field(..., description="preco × vendas, calculado pela API")
+
+
+class Estatisticas(BaseModel):
+    """O resumo do catálogo — o resultado de uma análise, virando resposta."""
+
+    total_produtos: int
+    preco_medio: float
+    preco_mediano: float
+    preco_desvio_padrao: float
+    produto_mais_caro: str
+    faturamento_total: float
+    por_categoria: dict[str, float]
 
 
 # ──────────────────────────────────────────────────────────────────────
-# 3. ESTADO EM MEMÓRIA — o nosso "banco de dados" de brinquedo
+# 3. ESTADO — o nosso "banco de dados" de brinquedo
 # ──────────────────────────────────────────────────────────────────────
+# Um DataFrame em memória, carregado do CSV. Não escala, e não é para
+# escalar: é didático. Trocar isto por SQLite ou Postgres muda umas
+# poucas linhas — e nenhuma das rotas abaixo.
 
-BD_AVALIACOES: dict[int, dict] = {}
-proximo_id = 1
+catalogo: pd.DataFrame = pd.read_csv(DADOS)
+catalogo.insert(0, "id", range(1, len(catalogo) + 1))
+
+
+def _para_dicionarios(df: pd.DataFrame) -> list[dict]:
+    """Converte um DataFrame em lista de dicionários, já com faturamento."""
+    saida = df.copy()
+    saida["faturamento"] = saida["preco"] * saida["vendas"]
+    return saida.to_dict(orient="records")
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -133,19 +141,32 @@ proximo_id = 1
 # ──────────────────────────────────────────────────────────────────────
 
 app = FastAPI(
-    title="SentimentAPI 🎬",
+    title="ProdutosAPI 🛒",
     description="""
-Mini-API de exemplo para a aula: avaliações de filmes com análise de
-sentimento. Serve para ver, ao vivo, como o FastAPI transforma **type
-hints, classes e docstrings** em validação e documentação automáticas.
+**A stack inteira da aula, servida por endpoints.** O mesmo dado que entrou
+por um arquivo, virou tabela no Pandas, virou número no NumPy e virou
+gráfico no Matplotlib — aqui ele volta a ser API, disponível para qualquer
+sistema que saiba fazer uma requisição HTTP.
+
+Cada seção abaixo é uma camada da pilha virando endpoint:
+
+| Camada | Endpoints |
+|---|---|
+| **NumPy** | `/numpy/vetorizacao` · `/numpy/estatisticas` |
+| **Pandas** | `/produtos` · `/produtos/por-categoria` |
+| **Matplotlib** | `/produtos/grafico` |
+| **Análise** | `/produtos/media` · `/estatisticas` |
 
 ## O que experimentar
-1. **GET /ola/PUC** — o hello world com parâmetro de rota.
-2. **POST /avaliacoes** — crie uma avaliação e veja a IA classificar.
-3. Tente enviar **nota = 42** ou **texto vazio** e veja o erro 422.
-4. **GET /docs** já está aberto — você está lendo isto aqui dentro.
+1. **GET /numpy/vetorizacao?valores=10,20,30** — a vetorização, por HTTP.
+2. **GET /produtos** — o catálogo (é este JSON que o `requests` consome).
+3. **GET /produtos/por-categoria** — o `groupby` do Pandas, servido.
+4. **GET /produtos/media** — o resultado da análise, servido como API.
+5. **POST /produtos** — cadastre um produto e veja o Pydantic validar.
+6. Tente enviar **preco = -5** e veja o erro **422** aparecer sozinho.
+7. **GET /produtos/grafico** — um gráfico Matplotlib entregue por HTTP.
 """,
-    version="1.0.0",
+    version="2.0.0",
 )
 
 
@@ -153,138 +174,310 @@ hints, classes e docstrings** em validação e documentação automáticas.
 
 
 @app.get("/", tags=["Básico"])
-def raiz() -> dict:
-    """O hello world. Um dicionário vira JSON automaticamente."""
-    return {"mensagem": "Olá! Bem-vindo à SentimentAPI. Abra /docs"}
+def inicio() -> dict:
+    """O hello world. Um dicionário Python vira JSON automaticamente."""
+    return {"mensagem": "Minha primeira API", "documentacao": "/docs"}
 
 
 @app.get("/ola/{nome}", tags=["Básico"], summary="Cumprimenta alguém")
 def ola(nome: str) -> dict:
-    """Recebe um **parâmetro de rota**.
+    """Recebe um **parâmetro de caminho** — o pedaço variável da URL.
 
-    Experimente `/ola/PUC` — depois experimente `/ola/` (roda 404) e
-    repare: é o type hint `nome: str` que diz ao FastAPI o que esperar.
+    Experimente `/ola/PUC`. É o type hint `nome: str` que diz ao FastAPI
+    o que esperar ali.
     """
     return {"mensagem": f"Olá, {nome}! 👋"}
 
 
-# ── 4.2 Dados: guardar e listar avaliações ────────────────────────────
+# ── 4.2 NUMPY SERVIDO — a camada de cálculo virando endpoint ──────────
+# O módulo 01 rodou no terminal. As MESMAS operações, agora acessíveis por
+# HTTP: é a primeira vez que a pilha encontra o mundo de fora.
 
 
-@app.post(
-    "/avaliacoes",
-    response_model=AvaliacaoResposta,
-    status_code=201,
-    tags=["Avaliações"],
-    summary="Cadastra uma avaliação e roda a IA",
-)
-def criar_avaliacao(avaliacao: AvaliacaoEntrada) -> AvaliacaoResposta:
-    """Recebe o corpo JSON já **validado** pelo Pydantic, roda o
-    classificador de sentimentos e guarda o resultado.
+@app.get("/numpy/vetorizacao", tags=["NumPy"], summary="A vetorização, por HTTP")
+def numpy_vetorizacao(
+    valores: str = Query(
+        default="10,20,30",
+        description="Números separados por vírgula",
+        examples=["10,20,30"],
+    ),
+    operacao: str = Query(
+        default="dobrar",
+        pattern="^(dobrar|somar5|quadrado|maiores_que_15)$",
+        description="dobrar | somar5 | quadrado | maiores_que_15",
+    ),
+) -> dict:
+    """A operação que vale para o array inteiro — agora como serviço.
 
-    - `avaliacao: AvaliacaoEntrada` no parâmetro ⇒ o FastAPI lê o JSON do
-      corpo da requisição e valida campo a campo.
-    - `response_model=AvaliacaoResposta` ⇒ a resposta também tem contrato,
-      e aparece modelada na documentação.
+    Experimente `/numpy/vetorizacao?valores=10,20,30&operacao=dobrar`.
+
+    Repare no `pattern=` do Query: só quatro operações são aceitas, e quem
+    mandar outra recebe **422** — a validação está no CONTRATO, não num
+    `if` escondido dentro da função.
     """
-    global proximo_id
-    resultado = classificar(avaliacao.texto)
+    # Dois 422 no mesmo endpoint, e vale comparar em aula:
+    #   `operacao` inválida  -> 422 AUTOMÁTICO, veio do pattern= do Query
+    #   `valores` inválido   -> 422 MANUAL, porque "lista de números numa
+    #                           string" não é um tipo que o Python conheça
+    # Sempre que der para expressar a regra no CONTRATO, prefira o de cima.
+    try:
+        array = np.array([float(v) for v in valores.split(",") if v.strip()])
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail=f"'{valores}' não é uma lista de números separados por vírgula.",
+        ) from None
 
-    registro = AvaliacaoResposta(
-        id=proximo_id,
-        **avaliacao.model_dump(),
-        sentimento=resultado["sentimento"],
-        confianca=resultado["confianca"],
-    )
-    BD_AVALIACOES[proximo_id] = registro.model_dump()
-    proximo_id += 1
-    return registro
+    if array.size == 0:
+        raise HTTPException(status_code=422, detail="Envie ao menos um número.")
+
+    # Sem laço, sem índice: a operação se propaga elemento a elemento.
+    resultados = {
+        "dobrar": array * 2,
+        "somar5": array + 5,
+        "quadrado": array**2,
+        "maiores_que_15": array > 15,
+    }
+    resultado = resultados[operacao]
+
+    return {
+        "entrada": array.tolist(),
+        "operacao": operacao,
+        "resultado": resultado.tolist(),
+        "como_seria_sem_numpy": "resultado = []; for v in valores: resultado.append(...)",
+        "observacao": "Uma linha, sem laço. A repetição acontece em código compilado.",
+    }
 
 
-@app.get("/avaliacoes", response_model=list[AvaliacaoResposta], tags=["Avaliações"])
-def listar_avaliacoes(
-    sentimento: str | None = None,
-    nota_minima: int | None = Query(default=None, ge=1, le=5),
-) -> list[AvaliacaoResposta]:
-    """Lista avaliações com **filtros por query string** (opcionais).
+@app.get("/numpy/estatisticas", tags=["NumPy"], summary="Estatística em uma linha")
+def numpy_estatisticas(
+    valores: str = Query(
+        default="7.5,8.0,6.5,9.0,8.5",
+        description="Números separados por vírgula",
+    ),
+) -> dict:
+    """As estatísticas do módulo 01 (`mean`, `max`, `std`…) como serviço.
+
+    Note o `float()` em cada valor: o NumPy devolve `np.float64` e o JSON
+    quer um número do Python. É o detalhe que só aparece quando se PUBLICA.
+    """
+    try:
+        array = np.array([float(v) for v in valores.split(",") if v.strip()])
+    except ValueError:
+        raise HTTPException(
+            status_code=422, detail=f"'{valores}' não é uma lista de números."
+        ) from None
+
+    if array.size == 0:
+        raise HTTPException(status_code=422, detail="Envie ao menos um número.")
+
+    return {
+        "valores": array.tolist(),
+        "media": float(array.mean()),
+        "maximo": float(array.max()),
+        "minimo": float(array.min()),
+        "desvio_padrao": float(array.std()),
+        "mediana": float(np.median(array)),
+        "posicao_do_maior": int(array.argmax()),
+    }
+
+
+# ── 4.3 PANDAS SERVIDO — a tabela virando endpoint ────────────────────
+# O catálogo que o módulo 02 leu com pd.read_csv() é o mesmo que sai
+# aqui em JSON. Filtros de query string são máscaras booleanas do Pandas.
+
+
+@app.get("/produtos", response_model=list[ProdutoResposta], tags=["Produtos"])
+def listar_produtos(
+    categoria: str | None = Query(default=None, description="Filtra por categoria"),
+    preco_maximo: float | None = Query(default=None, gt=0, description="Preço teto"),
+) -> list[dict]:
+    """Lista o catálogo, com **filtros opcionais por query string**.
 
     Query string é o que vem depois do `?` na URL. Experimente:
 
-        /avaliacoes?sentimento=positivo
-        /avaliacoes?nota_minima=4
-        /avaliacoes?nota_minima=99   <- e veja o 422 do Query(ge=1, le=5)
+        /produtos?categoria=Informática
+        /produtos?preco_maximo=1500
+        /produtos?preco_maximo=-1   <- e veja o 422 do Query(gt=0)
 
-    Detalhe fino: no corpo da requisição usamos `Field` (Pydantic); em query
-    string usamos `Query` — mesma ideia, lugares diferentes.
+    Detalhe fino que confunde todo mundo no começo: no CORPO da
+    requisição usamos `Field` (Pydantic); na URL usamos `Query`.
+    Mnemônico: **Field no corpo, Query na URL**.
     """
-    resultados = list(BD_AVALIACOES.values())
-    if sentimento is not None:
-        resultados = [a for a in resultados if a["sentimento"] == sentimento]
-    if nota_minima is not None:
-        resultados = [a for a in resultados if a["nota"] >= nota_minima]
-    return [AvaliacaoResposta(**a) for a in resultados]  # type: ignore[arg-type]
+    filtrado = catalogo
+    # Cada filtro é uma máscara booleana — a mesma ideia do módulo 01.
+    if categoria is not None:
+        filtrado = filtrado[filtrado["categoria"] == categoria]
+    if preco_maximo is not None:
+        filtrado = filtrado[filtrado["preco"] <= preco_maximo]
+    return _para_dicionarios(filtrado)
 
 
-@app.get("/avaliacoes/{id_avaliacao}", response_model=AvaliacaoResposta, tags=["Avaliações"])
-def buscar_avaliacao(id_avaliacao: int) -> AvaliacaoResposta:
-    """Busca uma avaliação pelo id.
+@app.post(
+    "/produtos",
+    response_model=ProdutoResposta,
+    status_code=201,
+    tags=["Produtos"],
+    summary="Cadastra um produto",
+)
+def criar_produto(produto: ProdutoEntrada) -> dict:
+    """Recebe o corpo JSON já **validado** pelo Pydantic e o acrescenta
+    ao catálogo.
 
-    Dois aprendizados aqui:
-    1. `id_avaliacao: int` ⇒ `/avaliacoes/abc` responde 422 na hora.
-    2. Não achou? Nós mesmos levantamos o 404 com `HTTPException`.
+    - `produto: ProdutoEntrada` no parâmetro ⇒ o FastAPI lê o JSON do
+      corpo da requisição e confere campo a campo.
+    - `status_code=201` ⇒ o status correto para "criei o recurso"
+      (o 200 significa apenas "deu certo").
+    - `response_model=ProdutoResposta` ⇒ a resposta também tem contrato,
+      e aparece modelada na documentação.
     """
-    if id_avaliacao not in BD_AVALIACOES:
+    global catalogo
+
+    novo_id = int(catalogo["id"].max()) + 1 if len(catalogo) else 1
+    linha = {"id": novo_id, **produto.model_dump()}
+    catalogo = pd.concat([catalogo, pd.DataFrame([linha])], ignore_index=True)
+    return _para_dicionarios(catalogo[catalogo["id"] == novo_id])[0]
+
+
+# ── 4.4 ANÁLISE E VISUALIZAÇÃO SERVIDAS ───────────────────────────────
+# É aqui que a aula fecha: o resultado de uma análise — e até o gráfico —
+# entregues por HTTP. É assim que modelos de ML chegam à produção.
+
+
+@app.get(
+    "/produtos/por-categoria",
+    tags=["Pandas"],
+    summary="O groupby do Pandas, servido",
+)
+def produtos_por_categoria() -> dict:
+    """O `split · apply · combine` do módulo 02, agora como endpoint.
+
+    A mesma linha do slide de agrupamento:
+
+        catalogo.groupby("categoria")["preco"].sum()
+
+    Cadastre o Teclado em `POST /produtos` e volte aqui: o resultado passa
+    a ser **Acessórios 240 / Informática 5700** — os números do slide,
+    calculados ao vivo.
+    """
+    agrupado = catalogo.groupby("categoria").agg(
+        itens=("produto", "count"),
+        preco_total=("preco", "sum"),
+        preco_medio=("preco", "mean"),
+    )
+    return {
+        str(categoria): {
+            "itens": int(linha["itens"]),
+            "preco_total": float(linha["preco_total"]),
+            "preco_medio": round(float(linha["preco_medio"]), 2),
+        }
+        for categoria, linha in agrupado.iterrows()
+    }
+
+
+@app.get("/produtos/media", tags=["Análise"], summary="O preço médio do catálogo")
+def preco_medio() -> dict:
+    """O resultado da análise, **servido como API** — o exercício da aula.
+
+    Uma média calculada no notebook morre no notebook. Publicada aqui,
+    ela vira insumo para um site, um painel ou outro sistema.
+    """
+    media = catalogo["preco"].mean()
+    return {"preco_medio": float(media)}
+
+
+@app.get("/estatisticas", response_model=Estatisticas, tags=["Análise"])
+def estatisticas() -> dict:
+    """O painel do catálogo: Pandas e NumPy trabalhando **dentro** de um
+    endpoint.
+
+    É este o desenho que leva um modelo de Machine Learning à produção:
+
+        cliente → FastAPI → Pandas / NumPy / modelo → resultado → JSON
+    """
+    precos = catalogo["preco"].to_numpy()
+    faturamento = catalogo["preco"] * catalogo["vendas"]
+
+    return {
+        "total_produtos": len(catalogo),
+        # float() porque o NumPy devolve np.float64, e o JSON quer número
+        # do Python. É o tipo de detalhe que só aparece quando se publica.
+        "preco_medio": float(precos.mean()),
+        "preco_mediano": float(np.median(precos)),
+        "preco_desvio_padrao": float(precos.std()),
+        "produto_mais_caro": str(catalogo.loc[catalogo["preco"].idxmax(), "produto"]),
+        "faturamento_total": float(faturamento.sum()),
+        "por_categoria": {
+            str(categoria): float(total)
+            for categoria, total in catalogo.groupby("categoria")["preco"].sum().items()
+        },
+    }
+
+
+@app.get(
+    "/produtos/grafico",
+    tags=["Análise"],
+    summary="O gráfico de barras, entregue por HTTP",
+    response_class=Response,
+    responses={200: {"content": {"image/png": {}}, "description": "PNG do gráfico"}},
+)
+def grafico() -> Response:
+    """Uma API não devolve só JSON. Aqui ela devolve uma **imagem PNG**
+    desenhada na hora pelo Matplotlib.
+
+    Abra `/produtos/grafico` direto no navegador.
+
+    Nota técnica: num servidor usamos a API de objetos do Matplotlib
+    (`Figure`), e não o `pyplot` global — o `pyplot` guarda estado
+    compartilhado, o que dá problema quando vários pedidos chegam juntos.
+    """
+    figura = Figure(figsize=(8, 4.5))
+    FigureCanvasAgg(figura)
+    eixo = figura.subplots()
+
+    eixo.bar(catalogo["produto"], catalogo["preco"], color="#2dd4bf")
+    eixo.set_title("Preço por Produto")
+    eixo.set_xlabel("Produto")
+    eixo.set_ylabel("Preço (R$)")
+    figura.tight_layout()
+
+    buffer = io.BytesIO()
+    figura.savefig(buffer, format="png", dpi=110)
+    return Response(content=buffer.getvalue(), media_type="image/png")
+
+
+# ── 4.5 A ORDEM DAS ROTAS IMPORTA ─────────────────────────────────────
+# Esta rota fica por ÚLTIMO de propósito, e é a lição mais fácil de
+# esquecer: o FastAPI testa as rotas de cima para baixo e para na
+# primeira que casa. `/produtos/{produto_id}` casa com QUALQUER coisa
+# depois de /produtos/ — inclusive com "media" e com "grafico".
+#
+# Se ela viesse antes, `/produtos/media` tentaria converter "media" em
+# int e responderia 422. Regra prática: **rotas com caminho fixo vêm
+# antes das rotas com parâmetro**.
+
+
+@app.get(
+    "/produtos/{produto_id}",
+    response_model=ProdutoResposta,
+    tags=["Produtos"],
+)
+def buscar_produto(produto_id: int) -> dict:
+    """Busca um produto pelo id.
+
+    Dois aprendizados de uma vez:
+
+    1. `produto_id: int` ⇒ `/produtos/abc` responde **422** na hora, com
+       uma mensagem clara, sem você escrever validação nenhuma.
+    2. Não achou? O **404 é nosso**, escrito à mão com `HTTPException`.
+
+    A diferença é sutil e importante: **422 = pedido malformado**
+    (automático); **404 = regra de negócio** (manual).
+    """
+    encontrado = catalogo[catalogo["id"] == produto_id]
+    if encontrado.empty:
         raise HTTPException(
             status_code=404,
-            detail=f"Avaliação {id_avaliacao} não existe. Cadastre em POST /avaliacoes.",
+            detail=f"Produto {produto_id} não existe. Veja a lista em GET /produtos.",
         )
-    return AvaliacaoResposta(**BD_AVALIACOES[id_avaliacao])  # type: ignore[arg-type]
-
-
-# ── 4.3 A IA exposta diretamente ──────────────────────────────────────
-
-
-@app.get("/predizer", tags=["IA"], summary="Classifica um texto na hora")
-def predizer_get(
-    texto: str = Query(min_length=3, description="Texto para analisar"),
-) -> dict:
-    """Atalho para testar o classificador sem corpo JSON — só query string:
-
-        /predizer?texto=Filme maravilhoso, adorei demais
-    """
-    return classificar(texto)
-
-
-@app.post("/predizer", tags=["IA"], summary="Classifica via corpo JSON")
-def predizer_post(payload: dict) -> dict:
-    """Mesma IA, agora recebendo um JSON `{"texto": "..."}` no corpo.
-
-    Um `dict` cru funciona, mas compare com `AvaliacaoEntrada`:
-    sem Pydantic não há validação, nem exemplos, nem modelo na documentação.
-    É a diferença entre uma API que se documenta e uma que se explica.
-    """
-    if "texto" not in payload:
-        raise HTTPException(status_code=422, detail="Envie {'texto': '...'}")
-    return classificar(payload["texto"])
-
-
-# ── 4.4 Estatísticas — fechando a parte de "dados" ────────────────────
-
-
-@app.get("/estatisticas", tags=["Dados"])
-def estatisticas() -> dict:
-    """Painelzinho de dados: contagem por sentimento e nota média."""
-    avaliacoes = list(BD_AVALIACOES.values())
-    if not avaliacoes:
-        return {"total": 0, "dica": "Cadastre avaliações em POST /avaliacoes"}
-
-    por_sentimento: dict[str, int] = {}
-    for a in avaliacoes:
-        por_sentimento[a["sentimento"]] = por_sentimento.get(a["sentimento"], 0) + 1
-
-    media_nota = sum(a["nota"] for a in avaliacoes) / len(avaliacoes)
-    return {
-        "total": len(avaliacoes),
-        "por_sentimento": por_sentimento,
-        "nota_media": round(media_nota, 2),
-    }
+    return _para_dicionarios(encontrado)[0]

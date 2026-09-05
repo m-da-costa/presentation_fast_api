@@ -1,0 +1,14 @@
+[project]
+name = "stack-dados-python"
+version = "0.1.0"
+description = "Material executável da aula 'A Stack Base de Ciência de Dados com Python'"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "requests>=2.32",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+]

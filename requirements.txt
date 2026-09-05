@@ -1,2 +1,14 @@
+# Alternativa ao uv, para quem usa pip:
+#   python -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# Com uv (recomendado), use `uv sync` — ele lê o pyproject.toml/uv.lock
+# e instala as versões exatas.
+
+numpy>=2.0
+pandas>=2.2
+matplotlib>=3.8
+seaborn>=0.13
+requests>=2.32
 fastapi>=0.115
 uvicorn[standard]>=0.30
