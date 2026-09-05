@@ -24,12 +24,72 @@ Análise     →  GET /produtos/media      ·  GET /estatisticas
 
 ## Rodar
 
+Este projeto usa **[uv](https://docs.astral.sh/uv/)** — o gerenciador de
+pacotes e ambientes do Python. Se você nunca usou, são dois comandos até a
+API no ar.
+
+### 1. Instalar o uv (uma vez na vida)
+
 ```bash
-uv sync                             # instala tudo
-uv run uvicorn main:app --reload    # sobe a API  → localhost:8000/docs
+# Linux e macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-Sem `uv`? `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`.
+Feche e reabra o terminal, e confira: `uv --version`.
+
+> Também dá para instalar com `pipx install uv`, `brew install uv` ou
+> `pip install uv` — tanto faz, é o mesmo programa.
+
+### 2. Clonar e rodar
+
+```bash
+git clone https://github.com/m-da-costa/presentation_fast_api.git
+cd presentation_fast_api
+
+uv run uvicorn main:app --reload      # → http://127.0.0.1:8000/docs
+```
+
+**É só isso.** Você não precisa criar `venv`, nem ativar nada, nem instalar
+dependência nenhuma: na primeira vez que você roda `uv run`, o uv baixa a
+versão certa do Python, cria o ambiente em `.venv/` e instala tudo o que
+está no `pyproject.toml`. Depois disso ele só confere e executa — em
+milissegundos.
+
+### Os três comandos que você vai usar
+
+| Comando | O que faz |
+|---|---|
+| `uv run <arquivo.py>` | roda um script **no ambiente do projeto** (sincroniza antes, se precisar) |
+| `uv sync` | instala/atualiza o ambiente sem rodar nada — útil antes da aula, com Wi-Fi bom |
+| `uv add <pacote>` | acrescenta uma dependência ao `pyproject.toml` e ao `uv.lock` |
+
+Nada de `pip install` solto e nada de `source .venv/bin/activate`: o prefixo
+`uv run` já coloca você dentro do ambiente certo.
+
+### Quem controla as versões
+
+- **`pyproject.toml`** — as dependências que nós pedimos, com versões mínimas.
+- **`uv.lock`** — as versões exatas que foram resolvidas. É ele que garante
+  que a sua máquina e a do professor rodem **o mesmo código**. Está versionado
+  no Git de propósito; não edite à mão.
+
+### Sem uv? (plano B)
+
+Funciona com `pip`, mas você cuida do ambiente na mão:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate            # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+O `requirements.txt` lista as mesmas dependências diretas do
+`pyproject.toml`. Nesse caminho, ignore o prefixo `uv run` dos exemplos
+abaixo — com o ambiente ativado, `python lab/01_numpy.py` basta.
 
 ## Os oito módulos
 
@@ -119,11 +179,16 @@ uv run uvicorn main:app --reload
 
 ## Arquivos
 
-- `main.py` — a API, em seções numeradas 1–4 para acompanhar a aula.
+- `main.py` — a API, em seções numeradas (1 dados, 2 Pydantic, 3 estado,
+  4.1–4.5 os endpoints) para acompanhar a aula.
 - `lab/` — um arquivo por módulo, todos comentados em PT-BR.
+  - `lab/dados/produtos.csv` — o catálogo que percorre a aula inteira.
+  - `lab/saida/` — onde os gráficos são salvos (os PNGs não vão para o Git).
 - `AULA.md` — roteiro do instrutor: minuto a minuto, falas e o que fazer quebrar.
 - `slides/index.html` — apresentação de 65 slides, autocontida (só o Mermaid
   e a fonte usam CDN; degradam sem rede).
+- `pyproject.toml` · `uv.lock` — as dependências e as versões exatas.
+- `requirements.txt` — as mesmas dependências, para quem for de `pip`.
 
 ## Nota sobre o estilo do código
 
