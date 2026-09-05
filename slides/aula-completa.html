@@ -328,6 +328,17 @@ pre.code.compact{font-size:clamp(.7rem,.92vw,.96rem); line-height:1.55}
 .arw:disabled{opacity:.18; cursor:default}
 #al{left:14px} #ar{right:14px}
 
+/* telas baixas (notebook 768p, projetor 720p): aperta as listas longas
+   para o slide não passar a altura da janela */
+@media (max-height:760px){
+  .cklist{gap:6px}
+  .ck{padding:6px 12px}
+  .ck .path{font-size:.86rem}
+  .ck .desc{font-size:.82rem}
+  .trailitem{padding:8px 12px}
+  .take .row{padding-bottom:6px}
+  .take{gap:6px}
+}
 @media (max-width:900px){
   .split.a,.split.b,.split.c{grid-template-columns:1fr}
   .g3{grid-template-columns:1fr 1fr}
