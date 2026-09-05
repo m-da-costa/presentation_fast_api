@@ -1,15 +1,218 @@
 # AULA.md — roteiro do instrutor
 
 **Aula:** A Stack Base de Ciência de Dados com Python
-**Plano de aula:** prof. Leonardo Afonso Amorim · **Laboratório:** Ricardo da Costa
-**Formato:** exposição + demo ao vivo (o professor programa, os alunos acompanham)
+**Plano de aula:** prof. Leonardo Afonso Amorim
+**A nossa parte:** **módulo 06 — FastAPI** · apresenta: Ricardo da Costa
+**Formato:** demo ao vivo (o professor programa, os alunos acompanham)
 **Público:** iniciantes · **Idioma:** PT-BR
 
-**Tese da aula:** *Ciência de Dados não termina no DataFrame.* O dado é
-**obtido**, **processado**, **analisado**, **visualizado** e **disponibilizado** —
-e o mesmo catálogo de produtos percorre a pilha inteira, do CSV ao endpoint.
+---
+
+## Quem apresenta o quê
+
+| Módulo | Quem | Material |
+|---|---|---|
+| 01 NumPy · 02 Pandas · 03 Matplotlib/Seaborn · 04 APIs · 05 requests | **prof. Leonardo** | os slides dele |
+| **06 · FastAPI** | **nós** | `slides/index.html` (25 slides) + `main.py` |
+| 07 exercício integrado · 08 quiz | **nós** (fecho) | os mesmos 25 slides |
+
+**Dois decks neste repositório:**
+
+- **`slides/index.html`** — **o que você apresenta.** 25 slides, só a nossa
+  parte: recapitulação de 2 minutos, FastAPI inteiro, exercício, quiz.
+- `slides/aula-completa.html` — os 65 slides cobrindo os oito módulos.
+  Referência: útil se o Leonardo pedir, se sobrar tempo, ou se um aluno
+  quiser rever NumPy/Pandas depois. **Não é o que você projeta.**
+
+Os arquivos de `lab/01`–`lab/05` seguem no repositório pelo mesmo motivo:
+são material dos módulos **dele**, que o aluno pode rodar em casa. Cada um
+deles termina chamando um endpoint da **nossa** API — é o que costura as
+duas metades.
 
 ---
+
+## A tese da nossa parte
+
+> *Uma análise que vive só no notebook não é usada por ninguém.*
+
+Eles passaram a manhã calculando. Nós mostramos como aquilo **sai da
+máquina deles**. Tudo o que o Leonardo ensinou tem um endereço na nossa API:
+
+| Camada (dele) | Endpoint (nosso) |
+|---|---|
+| NumPy | `/numpy/vetorizacao` · `/numpy/estatisticas` |
+| Pandas | `/produtos` · `/produtos/por-categoria` |
+| Matplotlib | `/produtos/grafico` |
+| APIs | `/openapi.json` · `/docs` |
+| A análise | `/produtos/media` · `/estatisticas` |
+
+**O fio condutor** é o catálogo de `lab/dados/produtos.csv` (Notebook R$ 4.500 ·
+Mouse R$ 150 · Monitor R$ 1.200) — o mesmo que ele usou. Preço médio
+**R$ 1.950,00** e **Notebook** como mais caro aparecem nos slides dele e saem
+iguais na nossa tela.
+
+---
+
+## Preparação (fazer ANTES da aula)
+
+```bash
+cd codes/internal/presentation_fast_api
+uv sync                                 # instala tudo
+uv run uvicorn main:app --reload        # deixe rodando num terminal
+```
+
+Checklist de guerra:
+
+- [ ] `curl localhost:8000/produtos` responde
+- [ ] `localhost:8000/docs` abre no navegador (tela cheia, fonte grande)
+- [ ] `localhost:8000/produtos/grafico` mostra o PNG
+- [ ] `slides/index.html` aberto (F11 = tela cheia) — confira que são **25** slides
+- [ ] Terminal com fonte grande (Ctrl+Shift+`+`)
+- [ ] `main.py` aberto no editor, ao lado do navegador (metade e metade)
+- [ ] **Pergunte ao Leonardo o que ele já cobriu.** Se ele passou por
+      `requests`, o slide 4 vira uma ponte de 30 segundos. Se não deu tempo,
+      gaste 2 minutos a mais nele.
+- [ ] **Plano B offline:** a API roda 100% local. Só os diagramas dos slides
+      (Mermaid) e a fonte usam CDN — sem rede, os slides continuam legíveis.
+
+**Estratégia geral:** navegador com `/docs` em metade da tela, editor com
+`main.py` na outra. As seções do código são numeradas (4.1 a 4.5) — navegue
+pelo número.
+
+---
+
+## Minuto a minuto — a nossa parte (≈45 min)
+
+Os 25 slides de `slides/index.html`.
+
+### 0–3 · Abertura e recapitulação (slides 1–3)
+
+Quem você é, em uma frase. O slide 2 (a pilha) e o 3 (o fluxo) são
+**recapitulação, não aula** — 60 segundos cada. Aponte a última camada:
+
+> *"Vocês passaram a manhã nas quatro primeiras. Eu vim falar da última."*
+
+### 3–6 · O mapa (slide 4)
+
+**O slide mais importante da nossa parte.** Cada camada da manhã deles já
+tem um endereço na nossa API. Leia a tabela em voz alta e prometa:
+
+> *"No fim, cada uma dessas linhas vai ter rodado na frente de vocês."*
+
+Volte a este slide ao longo da apresentação — é o que transforma seis
+assuntos soltos em uma aula só.
+
+### 6–10 · Por que publicar (slides 5–7)
+
+Divisor, **a inversão** (slide 6: `requests` consome, FastAPI cria) e o que é
+FastAPI (slide 7). A frase que fica: *"uma análise que vive só no notebook
+não é usada por ninguém."*
+
+### 10–17 · Hello world ao vivo (slides 8–9)
+
+**Escreva do zero**, num arquivo em branco, devagar:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def inicio():
+    return {"mensagem": "Minha primeira API"}
+```
+
+Rode: `uv run uvicorn main:app --reload`. Decore o comando: `main` = arquivo,
+`app` = objeto, `--reload` = recarrega ao salvar. Abra `localhost:8000`.
+
+**Pergunta à sala:** *"quantas linhas isso levaria no framework que vocês
+conhecem?"*
+
+Depois abra o `main.py` pronto (economize tempo) e mostre `/produtos`
+devolvendo o catálogo — **os mesmos dados do Pandas de hoje cedo**.
+
+### 17–22 · Type hints e Pydantic (slides 10–11)
+
+`produto_id: int` faz `/produtos/abc` responder **422** sozinho.
+Depois a classe `ProdutoEntrada` com `Field(gt=0)` (seção 2 do código).
+
+### 22–30 · O MOMENTO UAU: /docs (slide 12)
+
+**Aqui está a nossa parte inteira.** Abra `localhost:8000/docs`.
+
+- *"Eu não escrevi nenhuma documentação. Nenhuma."*
+- a docstring do endpoint aparecendo como descrição;
+- **Try it out** → executar **dentro da documentação**;
+- `/redoc` e `/openapi.json` de relance — o contrato é um padrão (OpenAPI).
+
+**Amarre no que o Leonardo ensinou:** *"lembram do cardápio do garçom? É este
+arquivo aqui. E ninguém escreveu — ele nasceu dos type hints."*
+
+**Os erros programados** (parecem o contrário, mas são o ponto alto):
+
+1. `POST /produtos` com `preco: -5` → **422**. *"Não escrevi UM `if`. Foi o `gt=0`."*
+2. nome com 1 caractere → 422 de novo (`min_length=2`);
+3. `GET /produtos/abc` → 422 ("não é int");
+4. `GET /produtos/999` → **404** — *"esse EU escrevi"* (`HTTPException`).
+   **422 = pedido malformado** (automático) · **404 = regra de negócio** (manual).
+
+**E o fecho:** cadastre o **Teclado** pelo `/docs` e abra
+`GET /produtos/por-categoria` — passa a dar **Acessórios 240 / Informática
+5700**, exatamente os números do `groupby` que o Leonardo mostrou. *"Aquele
+número que vocês viram no terminal dele, agora por HTTP."*
+
+### 30–34 · A pegadinha (slide 13)
+
+A ordem das rotas. `/produtos/media` respondia **422** porque
+`/produtos/{produto_id}` vinha antes e tentava converter `"media"` em int.
+**Conte que aconteceu de verdade com quem preparou a aula** — erro do
+professor é o que o aluno lembra.
+
+### 34–39 · A stack servida (slides 14–16)
+
+`/estatisticas` (Pandas e NumPy dentro do endpoint) e `/produtos/grafico`
+(abra no navegador: *"uma API não devolve só JSON"*). Feche no **slide 15**:
+
+> **"O FastAPI não substitui a sua análise — ele a entrega."**
+
+Nenhuma conta foi reescrita: o `mean()` é o mesmo, o `groupby` é o mesmo.
+Slide 16 (boas práticas) ✂️ leitura rápida, é material de consulta.
+
+### 39–43 · Exercício (slides 17–21)
+
+Slide 17 é a tese. Slides 19–21: o desafio e a solução — sai
+**R$ 1.950,00** e **Notebook**, os números que eles já conhecem.
+
+⚠️ Se você cadastrou o Teclado na demo, **reinicie o servidor** antes: o
+"banco" é um DataFrame em memória. Boa deixa: *"repararam que os dados
+sumiram? É por isso que existe banco de dados."*
+
+### 43–45 · Quiz e fecho (slides 22–25)
+
+As 7 perguntas (ou `uv run lab/08_quiz.py`), as respostas e o dever de casa:
+**escolha uma API pública, traga para um DataFrame e publique um resultado seu.**
+
+---
+
+## Se a sua parte encolher
+
+Cortes na ordem em que doem menos:
+
+1. slide 16 (boas práticas) — vira link;
+2. slides 22–24 (quiz) — o Leonardo pode fechar;
+3. slides 19–21 (exercício) — vira dever de casa;
+4. slide 9 (endpoint de dados) — vá direto do hello world ao `/docs`.
+
+**Nunca corte:** o slide 4 (o mapa), o slide 12 (`/docs`) e o slide 15
+(a stack virada endpoint). São o começo, o clímax e o fecho.
+
+---
+
+## Roteiro da aula completa (referência)
+
+O que segue é o roteiro dos **oito módulos**, para o `aula-completa.html`.
+Use se você acabar assumindo a aula inteira, ou para saber exatamente o que
+o Leonardo cobriu antes de você entrar.
 
 ## Como este repositório se encaixa no plano
 

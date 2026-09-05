@@ -3,8 +3,10 @@
 Material executável da aula **"A Stack Base de Ciência de Dados com Python"** —
 NumPy · Pandas · Matplotlib · Seaborn · APIs · requests · FastAPI.
 
-Plano de aula do prof. **Leonardo Afonso Amorim**. Este repositório é a parte
-que **roda** — e **a nossa parte da aula é o FastAPI**.
+Plano de aula do prof. **Leonardo Afonso Amorim**, que cobre os módulos
+01–05 (NumPy, Pandas, Matplotlib/Seaborn, APIs e requests).
+**A nossa parte é o módulo 06: FastAPI** — e é o que este repositório entrega,
+com todo o resto integrado nele.
 
 Por isso o FastAPI aqui não é o último assunto de uma lista: é a **espinha**.
 Cada camada da pilha roda no terminal **e** tem um endereço na API, e é ao
@@ -104,7 +106,9 @@ abaixo — com o ambiente ativado, `python lab/01_numpy.py` basta.
 | 07 | Exercício | `lab/07_exercicio.py` · `lab/07_solucao.py` | juntar tudo em um script | `/produtos/media` |
 | 08 | Quiz | `lab/08_quiz.py` | as 7 perguntas de fechamento, com correção | — |
 
-**Cada módulo termina chamando o endpoint que o serve.** Suba a API antes e
+Os módulos **01–05 são a aula do prof. Leonardo** — ficam aqui para o aluno
+rodar em casa. O **06 é a nossa parte**, e é onde os outros desaguam:
+**cada módulo termina chamando o endpoint que o serve.** Suba a API antes e
 rode os módulos com ela no ar — é aí que a aula fecha. Sem a API no ar todos
 os arquivos continuam rodando: eles avisam e seguem sem o último bloco.
 
@@ -185,8 +189,11 @@ uv run uvicorn main:app --reload
   - `lab/dados/produtos.csv` — o catálogo que percorre a aula inteira.
   - `lab/saida/` — onde os gráficos são salvos (os PNGs não vão para o Git).
 - `AULA.md` — roteiro do instrutor: minuto a minuto, falas e o que fazer quebrar.
-- `slides/index.html` — apresentação de 65 slides, autocontida (só o Mermaid
-  e a fonte usam CDN; degradam sem rede).
+- `slides/index.html` — **a apresentação da nossa parte**: 25 slides, do
+  hello world ao fecho. É este que se projeta.
+- `slides/aula-completa.html` — os 65 slides dos oito módulos, de referência
+  (útil se um aluno quiser rever NumPy/Pandas depois). Ambos são
+  autocontidos — só o Mermaid e a fonte usam CDN, e degradam sem rede.
 - `pyproject.toml` · `uv.lock` — as dependências e as versões exatas.
 - `requirements.txt` — as mesmas dependências, para quem for de `pip`.
 

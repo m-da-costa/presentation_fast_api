@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FastAPI — publicando a sua análise</title>
+<title>A Stack Base de Ciência de Dados com Python</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;800&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -463,37 +463,74 @@ pre.code.compact{font-size:clamp(.7rem,.92vw,.96rem); line-height:1.55}
 <button class="arw" id="al" aria-label="anterior">‹</button>
 <button class="arw" id="ar" aria-label="próximo">›</button>
 <div id="dots"></div>
-<div id="snum">01 / 25</div>
-<div id="brand">FastAPI · a nossa parte da aula — plano do prof. Leonardo Afonso · Ricardo da Costa</div>
+<div id="snum">01 / 65</div>
+<div id="brand">A Stack Base de Ciência de Dados com Python · plano de aula do prof. Leonardo Afonso</div>
 
 <div id="deck">
+
 <!-- ═══════════ 1 · TÍTULO ═══════════ -->
 <section class="slide active">
   <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
   <div class="inner center">
-    <p class="eyebrow anim">Ciência de Dados com Python · módulo 06</p>
-    <h1 class="display anim" style="--d:.08s"><span class="grad">FastAPI</span>: publicando a sua análise</h1>
+    <p class="eyebrow anim">Aula · Ciência de Dados com Python</p>
+    <h1 class="display anim" style="--d:.08s">A Stack Base de <span class="grad">Ciência de Dados</span> com Python</h1>
     <div class="rule anim" style="--d:.16s"></div>
-    <p class="body big anim" style="--d:.22s">Tudo o que vocês viram hoje — NumPy, Pandas, gráficos, APIs — <b>agora vira um endereço</b></p>
+    <p class="body big anim" style="--d:.22s">NumPy · Pandas · Matplotlib · Seaborn · APIs · FastAPI</p>
     <div class="tagrow anim" style="--d:.3s">
-      <span class="pill">⚡&nbsp;FastAPI</span>
-      <span class="pill">✅ validação automática</span>
-      <span class="pill">📚 /docs de graça</span>
-      <span class="pill">🛒 produtos &amp; vendas</span>
-      <span class="pill">0 pré-requisitos</span>
+      <span class="pill">Obter dados</span>
+      <span class="pill">Analisar</span>
+      <span class="pill">Visualizar</span>
+      <span class="pill">Disponibilizar</span>
     </div>
-    <p class="credit anim" style="--d:.4s">apresenta: <strong>Ricardo da Costa</strong> &nbsp;·&nbsp; plano de aula: prof. <strong>Leonardo Afonso Amorim</strong></p>
-    <p class="hint anim" style="--d:.52s">← → navegam · a roda dá zoom nos diagramas · todo código destes slides roda em <b>main.py</b></p>
+    <p class="credit anim" style="--d:.4s">plano de aula: prof. <strong>Leonardo Afonso Amorim</strong> &nbsp;·&nbsp; laboratório: <strong>Ricardo da Costa</strong></p>
+    <p class="hint anim" style="--d:.52s">← → navegam · a roda dá zoom nos diagramas · todo código destes slides roda em <b>lab/</b></p>
   </div>
 </section>
 
-<!-- ═══════════ 2 · VISÃO GERAL DA STACK ═══════════ -->
+<!-- ═══════════ 2 · ROTEIRO ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
-      <p class="eyebrow anim">Recapitulando · 60 segundos</p>
-      <h2 class="anim" style="--d:.06s">Onde nós paramos</h2>
-      <p class="sub anim" style="--d:.12s">Cada camada resolve um problema e apoia a seguinte. Vocês já percorreram as quatro primeiras — <b>falta a última</b>.</p>
+      <p class="eyebrow anim">Roteiro</p>
+      <h2 class="anim" style="--d:.06s">O que veremos hoje</h2>
+    </header>
+    <div class="grid g6">
+      <div class="card anim" style="--d:.12s"><div class="ico">🔢</div><h3>01 · NumPy</h3><p>arrays e computação numérica</p></div>
+      <div class="card anim" style="--d:.17s"><div class="ico">🐼</div><h3>02 · Pandas</h3><p>dados tabulares e análise</p></div>
+      <div class="card anim" style="--d:.22s"><div class="ico">📊</div><h3>03 · Matplotlib / Seaborn</h3><p>visualização de dados</p></div>
+      <div class="card anim" style="--d:.27s"><div class="ico">🔌</div><h3>04 · APIs</h3><p>REST, JSON, HTTP, autenticação</p></div>
+      <div class="card anim" style="--d:.32s"><div class="ico">📥</div><h3>05 · requests</h3><p>consumindo APIs com Python</p></div>
+      <div class="card anim" style="--d:.37s; border-color:rgba(45,212,191,.4)"><div class="ico">⚡</div><h3>06 · FastAPI</h3><p>criando a nossa própria API</p></div>
+    </div>
+    <p class="note anim" style="--d:.44s">E ainda: <b>07 · exercício integrado</b> (juntar tudo em um script) e <b>08 · quiz de fechamento</b>.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 3 · OBJETIVOS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">Objetivos de aprendizagem</p>
+      <h2 class="anim" style="--d:.06s">Ao final da aula você será capaz de</h2>
+    </header>
+    <div class="trail g2" style="grid-template-columns:1fr 1fr">
+      <div class="trailitem anim" style="--d:.12s"><span class="num">1</span><div><h4>Manipular dados</h4><p>operar arrays com NumPy e DataFrames com Pandas</p></div></div>
+      <div class="trailitem anim" style="--d:.17s"><span class="num">2</span><div><h4>Visualizar</h4><p>gerar gráficos com Matplotlib e Seaborn</p></div></div>
+      <div class="trailitem anim" style="--d:.22s"><span class="num">3</span><div><h4>Entender APIs</h4><p>REST x SOAP, JSON x XML, métodos e status HTTP</p></div></div>
+      <div class="trailitem anim" style="--d:.27s"><span class="num">4</span><div><h4>Consumir APIs</h4><p>usar requests, tratar erros e virar DataFrame</p></div></div>
+      <div class="trailitem anim" style="--d:.32s"><span class="num">5</span><div><h4>Criar APIs</h4><p>expor resultados com endpoints FastAPI</p></div></div>
+      <div class="trailitem anim" style="--d:.37s"><span class="num">6</span><div><h4>Integrar tudo</h4><p>montar o pipeline completo de ponta a ponta</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 4 · VISÃO GERAL DA STACK ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">Visão geral da stack</p>
+      <h2 class="anim" style="--d:.06s">Uma stack, <span class="grad">não ferramentas isoladas</span></h2>
+      <p class="sub anim" style="--d:.12s">Cada camada resolve um problema e apoia a camada seguinte.</p>
     </header>
     <div class="layers">
       <div class="layer l1 anim" style="--d:.16s"><span class="lname">Python</span><span class="ldesc">a linguagem base</span></div>
@@ -509,13 +546,13 @@ pre.code.compact{font-size:clamp(.7rem,.92vw,.96rem); line-height:1.55}
   </div>
 </section>
 
-<!-- ═══════════ 3 · O FLUXO TÍPICO ═══════════ -->
+<!-- ═══════════ 5 · O FLUXO TÍPICO ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
-      <p class="eyebrow anim">Recapitulando · 60 segundos</p>
+      <p class="eyebrow anim">Visão geral da stack</p>
       <h2 class="anim" style="--d:.06s">O fluxo típico de um projeto de dados</h2>
-      <p class="sub anim" style="--d:.12s">O mesmo catálogo de produtos de hoje. <b>Repare no último quadro</b> — é onde a gente entra.</p>
+      <p class="sub anim" style="--d:.12s">O <b>mesmo exemplo</b> vai nos acompanhar a aula inteira: um catálogo de produtos.</p>
     </header>
     <div class="merm grow anim" style="--d:.18s">
       <pre class="mermaid">
@@ -538,13 +575,13 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 4 · ONDE ENTRA A NOSSA PARTE ═══════════ -->
+<!-- ═══════════ 6 · ONDE ENTRA A NOSSA PARTE ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
-      <p class="eyebrow anim">A nossa parte · o mapa de hoje</p>
-      <h2 class="anim" style="--d:.06s">Tudo o que vocês viram <span class="grad">vira endpoint</span></h2>
-      <p class="sub anim" style="--d:.12s">O <b>FastAPI</b> não é mais um assunto no fim da lista — é onde todos os outros <b>chegam ao mundo</b>. Cada camada da manhã de vocês tem um endereço aqui.</p>
+      <p class="eyebrow anim">A nossa parte</p>
+      <h2 class="anim" style="--d:.06s">Toda essa pilha <span class="grad">vira endpoint</span></h2>
+      <p class="sub anim" style="--d:.12s">O <b>FastAPI</b> não é o último assunto da lista — é onde todos os outros <b>chegam ao mundo</b>. Cada camada de hoje tem um endereço na nossa API.</p>
     </header>
     <div class="cklist">
       <div class="ck anim" style="--d:.16s"><span class="ckn">01</span><span class="desc"><b>NumPy</b> — o cálculo vetorizado</span><span class="meth get">GET</span><span class="path">/numpy/vetorizacao</span></div>
@@ -560,7 +597,981 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 5 · DIVISOR 06 ═══════════ -->
+<!-- ═══════════ 7 · DIVISOR 01 ═══════════ -->
+<section class="slide divider">
+  <div class="orb o1"></div><div class="orb o2"></div>
+  <div class="inner">
+    <div class="divnum anim">01</div>
+    <h2 class="divtitle anim" style="--d:.1s">NumPy</h2>
+    <div class="rule anim" style="--d:.16s"></div>
+    <p class="divsub anim" style="--d:.22s">A base numérica de todo o ecossistema de dados em Python.</p>
+    <p class="labref anim" style="--d:.3s">roda em <b>lab/01_numpy.py</b> &nbsp;·&nbsp; servido em <b>GET /numpy/vetorizacao</b> e <b>/numpy/estatisticas</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 8 · O PROBLEMA QUE O NUMPY RESOLVE ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">01 · NumPy</p>
+      <h2 class="anim" style="--d:.06s">O problema que o NumPy resolve</h2>
+      <p class="sub anim" style="--d:.12s">Listas do Python são flexíveis, mas não foram feitas para <b>cálculo numérico em massa</b>.</p>
+    </header>
+    <div class="split b" style="align-items:stretch">
+      <div class="panel grow anim" style="--d:.16s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">python puro</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">valores = [10, 20, 30]
+
+# dobrar cada valor
+dobro = []
+for v in valores:
+    dobro.append(v * 2)</pre>
+      </div>
+      <div class="panel grow anim" style="--d:.22s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">com numpy</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">import numpy as np
+
+valores = np.array([10, 20, 30])
+
+# dobrar cada valor
+dobro = valores * 2</pre>
+      </div>
+    </div>
+    <p class="note anim" style="--d:.3s">Mesma tarefa. Menos código, mais legível e <b>muito mais rápido</b> — porque a repetição acontece dentro de <b>código compilado</b>, não no laço do Python.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 9 · O NDARRAY ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">01 · NumPy</p>
+      <h2 class="anim" style="--d:.06s">O <span class="grad">ndarray</span></h2>
+      <p class="sub anim" style="--d:.12s">A estrutura central do NumPy: um array n-dimensional, <b>homogêneo</b> e de <b>tamanho fixo</b>.</p>
+    </header>
+    <div class="grid g3" style="flex:none">
+      <div class="card anim" style="--d:.16s"><div class="ico">▭</div><h3>1D — vetor</h3><p><span style="font-family:var(--mono);color:var(--teal2)">np.array([7.5, 8.0, 6.5])</span><br>notas de um aluno</p></div>
+      <div class="card anim" style="--d:.21s"><div class="ico">▦</div><h3>2D — matriz</h3><p><span style="font-family:var(--mono);color:var(--teal2)">np.array([[1, 2], [3, 4]])</span><br>tabela de valores</p></div>
+      <div class="card anim" style="--d:.26s"><div class="ico">🧊</div><h3>3D — tensor</h3><p><span style="font-family:var(--mono);color:var(--teal2)">np.zeros((2, 3, 4))</span><br>imagens, séries temporais</p></div>
+    </div>
+    <div class="split b" style="margin-top:clamp(12px,2vh,20px)">
+      <div class="panel anim" style="--d:.32s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">atributos úteis</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">notas.shape   # formato
+notas.dtype   # tipo dos elementos
+notas.ndim    # nº de dimensões</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <ul class="clist anim" style="--d:.38s">
+          <li><span class="cdot"></span><span>Todos os elementos têm o <b>mesmo tipo</b></span></li>
+          <li><span class="cdot"></span><span>Tamanho <b>definido na criação</b></span></li>
+          <li><span class="cdot"></span><span>Armazenamento <b>contíguo na memória</b></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 10 · VETORIZAÇÃO ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">01 · NumPy</p>
+      <h2 class="anim" style="--d:.06s">Vetorização: <span class="grad">a operação vale para o array inteiro</span></h2>
+    </header>
+    <div class="split b">
+      <div class="col">
+        <div class="panel anim" style="--d:.14s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">vetorização</span><span class="lang">python</span></div>
+          <pre class="code" data-lang="python">valores = np.array([10, 20, 30])
+
+valores * 2</pre>
+        </div>
+        <div class="out anim" style="--d:.2s"><span class="lbl">resultado</span>array([20, 40, 60])</div>
+        <p class="note anim" style="--d:.26s"><b>Sem laço. Sem índice.</b> A operação se propaga elemento a elemento.</p>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="chips anim" style="--d:.3s; justify-content:flex-start">
+          <span class="chip"><code>valores + 5</code> soma escalar a todos</span>
+          <span class="chip"><code>valores ** 2</code> eleva todos ao quadrado</span>
+          <span class="chip"><code>valores &gt; 15</code> array de True / False</span>
+          <span class="chip"><code>a + b</code> soma elemento a elemento</span>
+        </div>
+        <p class="note pink anim" style="--d:.38s"><b>Máscara booleana</b> — guarde este nome. <span style="font-family:var(--mono)">valores &gt; 15</span> devolve <span style="font-family:var(--mono)">[False, True, True]</span>, e é exatamente assim que o <b>Pandas filtra linhas</b> no módulo 02.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 11 · ESTATÍSTICAS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">01 · NumPy</p>
+      <h2 class="anim" style="--d:.06s">Estatísticas básicas <span class="grad">em uma linha</span></h2>
+    </header>
+    <div class="split b">
+      <div class="col">
+        <div class="panel grow anim" style="--d:.14s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">lab/01_numpy.py</span><span class="lang">python</span></div>
+          <pre class="code" data-lang="python">import numpy as np
+
+notas = np.array([7.5, 8.0, 6.5, 9.0, 8.5])
+
+print(notas.mean())
+print(notas.max())
+print(notas.min())</pre>
+        </div>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="out anim" style="--d:.2s"><span class="lbl">saída</span>7.9
+9.0
+6.5</div>
+        <div class="chips anim" style="--d:.28s; justify-content:flex-start; margin-top:14px">
+          <span class="chip"><code>mean()</code> média</span>
+          <span class="chip"><code>std()</code> desvio padrão</span>
+          <span class="chip"><code>sum()</code> soma</span>
+          <span class="chip"><code>median()</code> mediana</span>
+          <span class="chip"><code>argmax()</code> posição do maior</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 12 · POR QUE NUMPY ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">01 · NumPy</p>
+      <h2 class="anim" style="--d:.06s">Por que usar NumPy <span class="grad">em vez de listas?</span></h2>
+    </header>
+    <div class="grid g2" style="flex:none">
+      <div class="card anim" style="--d:.14s"><div class="ico">⚡</div><h3>Desempenho</h3><p>operações executadas em <b>código compilado</b></p></div>
+      <div class="card anim" style="--d:.19s"><div class="ico">➗</div><h3>Vetorização</h3><p>menos laços, código mais próximo da <b>fórmula</b></p></div>
+      <div class="card anim" style="--d:.24s"><div class="ico">🧊</div><h3>Multidimensional</h3><p>vetores, matrizes e tensores <b>nativos</b></p></div>
+      <div class="card anim" style="--d:.29s"><div class="ico">🏛️</div><h3>Fundação do ecossistema</h3><p><b>Pandas, SciPy, scikit-learn</b> e outros se apoiam nele</p></div>
+    </div>
+    <div class="split b" style="margin-top:clamp(12px,2vh,20px); flex:none">
+      <div class="out anim" style="--d:.36s"><span class="lbl">medição real · dobrar 1 milhão de elementos</span>lista Python :    86.71 ms
+array NumPy  :     0.85 ms
+NumPy foi ~102x mais rápido</div>
+      <p class="note amber anim" style="--d:.42s">Este número <b>não é do slide — é da sua máquina</b>. Rode <span style="font-family:var(--mono)">uv run lab/01_numpy.py</span> e veja o seu. O laço do Python paga um custo por elemento; o NumPy paga uma vez.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 13 · DIVISOR 02 ═══════════ -->
+<section class="slide divider">
+  <div class="orb o2"></div><div class="orb o3"></div>
+  <div class="inner">
+    <div class="divnum anim">02</div>
+    <h2 class="divtitle anim" style="--d:.1s">Pandas</h2>
+    <div class="rule anim" style="--d:.16s"></div>
+    <p class="divsub anim" style="--d:.22s">Dados tabulares: a ferramenta do dia a dia em Ciência de Dados.</p>
+    <p class="labref anim" style="--d:.3s">roda em <b>lab/02_pandas.py</b> &nbsp;·&nbsp; servido em <b>GET /produtos</b> e <b>/produtos/por-categoria</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 14 · SERIES E DATAFRAME ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">02 · Pandas</p>
+      <h2 class="anim" style="--d:.06s">Series e DataFrame</h2>
+      <p class="sub anim" style="--d:.12s">Duas estruturas, uma relação simples: um <b>DataFrame</b> é um conjunto de <b>Series</b> que compartilham o mesmo índice.</p>
+    </header>
+    <div class="vs">
+      <div class="vcol teal anim" style="--d:.16s">
+        <span class="tag">Series</span>
+        <h3>uma coluna com índice</h3>
+        <div class="out plain" style="margin-top:14px">0    100
+1    150
+2     90
+Name: vendas, dtype: int64</div>
+      </div>
+      <div class="x anim" style="--d:.2s">⊂</div>
+      <div class="vcol violet anim" style="--d:.24s">
+        <span class="tag">DataFrame</span>
+        <h3>tabela com linhas e colunas</h3>
+        <div class="out plain" style="margin-top:14px">  produto  vendas
+0       A     100
+1       B     150
+2       C      90</div>
+      </div>
+    </div>
+    <p class="note anim" style="--d:.32s">Cada coluna do DataFrame <b>é</b> uma Series. Puxar <span style="font-family:var(--mono)">df["vendas"]</span> devolve exatamente a Series da esquerda.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 15 · CRIANDO UM DATAFRAME ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">02 · Pandas</p>
+      <h2 class="anim" style="--d:.06s">Criando um DataFrame</h2>
+    </header>
+    <div class="split b">
+      <div class="panel grow anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">lab/02_pandas.py</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">import pandas as pd
+
+dados = {
+    "produto": ["A", "B", "C"],
+    "vendas": [100, 150, 90]
+}
+
+df = pd.DataFrame(dados)
+print(df)</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="out anim" style="--d:.2s"><span class="lbl">saída</span>  produto  vendas
+0       A     100
+1       B     150
+2       C      90</div>
+        <p class="note anim" style="--d:.28s">Na prática, os dados vêm de <b>arquivos e bancos</b>:</p>
+        <div class="chips anim" style="--d:.34s; justify-content:flex-start">
+          <span class="chip"><code>pd.read_csv()</code></span>
+          <span class="chip"><code>pd.read_excel()</code></span>
+          <span class="chip"><code>pd.read_sql()</code></span>
+          <span class="chip"><code>pd.read_json()</code></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 16 · SELECIONAR E FILTRAR ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">02 · Pandas</p>
+      <h2 class="anim" style="--d:.06s">Selecionar e filtrar</h2>
+    </header>
+    <div class="split b" style="flex:none">
+      <div class="col">
+        <div class="panel anim" style="--d:.14s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">selecionar uma coluna</span><span class="lang">python</span></div>
+          <pre class="code compact" data-lang="python">df["vendas"]</pre>
+        </div>
+        <div class="out anim" style="--d:.18s">0    100
+1    150
+2     90</div>
+      </div>
+      <div class="col">
+        <div class="panel anim" style="--d:.22s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">filtrar linhas</span><span class="lang">python</span></div>
+          <pre class="code compact" data-lang="python">df[df["vendas"] &gt; 100]</pre>
+        </div>
+        <div class="out anim" style="--d:.26s">  produto  vendas
+1       B     150</div>
+      </div>
+    </div>
+    <div class="note pink anim" style="--d:.34s; margin-top:clamp(14px,2.4vh,26px)">
+      <b>Por que o filtro funciona?</b> &nbsp;<span style="font-family:var(--mono)">df["vendas"] &gt; 100</span> devolve <span style="font-family:var(--mono)">[False, True, False]</span> — a <b>mesma máscara booleana do NumPy</b> do módulo 01. O Pandas devolve apenas as linhas marcadas como <b>True</b>.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 17 · ESTATÍSTICAS E AGRUPAMENTOS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">02 · Pandas</p>
+      <h2 class="anim" style="--d:.06s">Estatísticas e agrupamentos</h2>
+    </header>
+    <div class="split b" style="flex:none">
+      <div class="panel anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">estatística de uma coluna</span><span class="lang">python</span></div>
+        <pre class="code compact" data-lang="python">df["preco"].mean()
+# 1950.0
+
+df.describe()
+# count, mean, std, min, max</pre>
+      </div>
+      <div class="panel anim" style="--d:.2s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">agrupar e somar</span><span class="lang">python</span></div>
+        <pre class="code compact" data-lang="python">df.groupby("categoria")["preco"].sum()
+
+# categoria
+# Acessórios     240
+# Informática   5700</pre>
+      </div>
+    </div>
+    <p class="sub anim" style="--d:.28s; margin-top:clamp(12px,2vh,22px)">O padrão <b>split · apply · combine</b></p>
+    <div class="grid g3" style="flex:none; margin-top:10px">
+      <div class="card anim" style="--d:.32s"><h3>split</h3><p>quebra a tabela por categoria</p></div>
+      <div class="card anim" style="--d:.36s"><h3>apply</h3><p>aplica a função em cada grupo</p></div>
+      <div class="card anim" style="--d:.4s"><h3>combine</h3><p>junta tudo em um resultado</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 18 · NUMPY x PANDAS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">02 · Pandas</p>
+      <h2 class="anim" style="--d:.06s">NumPy <span class="grad">×</span> Pandas</h2>
+      <p class="sub anim" style="--d:.12s">Não são concorrentes: resolvem <b>problemas diferentes</b> na mesma pilha.</p>
+    </header>
+    <div class="vs">
+      <div class="vcol teal anim" style="--d:.16s">
+        <span class="tag">NumPy</span><h3>o cálculo</h3>
+        <ul>
+          <li>Arrays homogêneos</li>
+          <li>Computação numérica pura</li>
+          <li>Álgebra linear e estatística</li>
+          <li>Sem rótulos de linha ou coluna</li>
+          <li>Rápido e enxuto na memória</li>
+        </ul>
+      </div>
+      <div class="x anim" style="--d:.2s">×</div>
+      <div class="vcol violet anim" style="--d:.24s">
+        <span class="tag">Pandas</span><h3>a organização</h3>
+        <ul>
+          <li>Tabelas com colunas nomeadas</li>
+          <li>Tipos diferentes por coluna</li>
+          <li>Filtros, junções, agrupamentos</li>
+          <li>Dados faltantes e datas</li>
+          <li>Leitura de CSV, Excel, SQL, JSON</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note anim" style="--d:.32s">O Pandas se apoia intensamente em estruturas e conceitos do ecossistema NumPy — <b>vetorização, máscaras booleanas e dtypes</b> vêm de lá. Dá para descer ao NumPy quando quiser: <span style="font-family:var(--mono)">df["preco"].to_numpy()</span>.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 19 · DIVISOR 03 ═══════════ -->
+<section class="slide divider">
+  <div class="orb o1"></div><div class="orb o3"></div>
+  <div class="inner">
+    <div class="divnum anim">03</div>
+    <h2 class="divtitle anim" style="--d:.1s">Visualização</h2>
+    <div class="rule anim" style="--d:.16s"></div>
+    <p class="divsub anim" style="--d:.22s">Matplotlib e Seaborn: transformar números em entendimento.</p>
+    <p class="labref anim" style="--d:.3s">roda em <b>lab/03_visualizacao.py</b> &nbsp;·&nbsp; servido em <b>GET /produtos/grafico</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 20 · POR QUE VISUALIZAR ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">03 · Visualização</p>
+      <h2 class="anim" style="--d:.06s">Por que visualizar?</h2>
+      <p class="sub anim" style="--d:.12s">A estatística <b>resume</b>; o gráfico <b>revela o que o resumo esconde</b>.</p>
+    </header>
+    <div class="grid g3">
+      <div class="card anim" style="--d:.16s"><div class="ico">🔎</div><h3>Explorar</h3><p>encontrar padrões, tendências e valores fora do esperado <b>antes</b> de qualquer modelo</p></div>
+      <div class="card anim" style="--d:.22s"><div class="ico">✔️</div><h3>Verificar</h3><p>checar suposições: distribuição, escala, dados faltantes</p></div>
+      <div class="card anim" style="--d:.28s"><div class="ico">📣</div><h3>Comunicar</h3><p>apresentar o resultado a quem vai <b>decidir</b> com base nele</p></div>
+    </div>
+    <p class="note anim" style="--d:.36s"><b>Duas bibliotecas, um mesmo motor.</b> Matplotlib desenha; Seaborn é uma camada de alto nível construída <b>sobre</b> o Matplotlib, voltada a gráficos estatísticos.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 21 · MATPLOTLIB ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">03 · Matplotlib</p>
+      <h2 class="anim" style="--d:.06s">Matplotlib: <span class="grad">controle sobre cada elemento</span></h2>
+    </header>
+    <div class="split b">
+      <div class="panel grow anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">lab/03_visualizacao.py</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">import matplotlib.pyplot as plt
+
+produtos = ["A", "B", "C"]
+vendas = [100, 150, 90]
+
+plt.bar(produtos, vendas)
+plt.title("Vendas por Produto")
+plt.xlabel("Produto")
+plt.ylabel("Vendas")
+plt.show()</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <ul class="clist anim" style="--d:.22s">
+          <li><span class="cdot"></span><span><b>Cada chamada acrescenta uma camada</b> ao gráfico: barras, título, rótulos dos eixos.</span></li>
+          <li><span class="cdot"></span><span><span style="font-family:var(--mono)">plt.show()</span> abre a janela. Num <b>servidor</b> (módulo 06) não há janela — aí se salva o arquivo.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 22 · OS QUATRO GRÁFICOS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">03 · Matplotlib</p>
+      <h2 class="anim" style="--d:.06s">Os quatro gráficos do dia a dia</h2>
+    </header>
+    <div class="grid g4">
+      <div class="card anim" style="--d:.14s"><div class="ico">📈</div><h3>plt.plot()</h3><p><b>linhas</b> — evolução no tempo</p></div>
+      <div class="card anim" style="--d:.19s"><div class="ico">📊</div><h3>plt.bar()</h3><p><b>barras</b> — comparar categorias</p></div>
+      <div class="card anim" style="--d:.24s"><div class="ico">✳️</div><h3>plt.scatter()</h3><p><b>dispersão</b> — relação entre variáveis</p></div>
+      <div class="card anim" style="--d:.29s"><div class="ico">📐</div><h3>plt.hist()</h3><p><b>histograma</b> — distribuição de valores</p></div>
+    </div>
+    <p class="note amber anim" style="--d:.38s">A escolha do gráfico vem da <b>pergunta</b>, não do gosto: comparar, relacionar, distribuir ou acompanhar no tempo.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 23 · SEABORN ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">03 · Seaborn</p>
+      <h2 class="anim" style="--d:.06s">Seaborn: <span class="grad">alto nível e integrado ao Pandas</span></h2>
+    </header>
+    <div class="split b">
+      <div class="panel grow anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">lab/03_visualizacao.py</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">import seaborn as sns
+
+sns.barplot(
+    data=df,
+    x="produto",
+    y="preco"
+)</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="note anim" style="--d:.22s"><b>data=df</b> — o Seaborn recebe o <b>DataFrame inteiro</b> e você indica as colunas <b>pelo nome</b>. Ele cuida de cores, legenda e rótulos.</div>
+        <p class="body anim" style="--d:.3s">Compare com o Matplotlib, que recebe <b>listas soltas</b> e não sabe nada sobre a sua tabela. É a diferença entre descrever <i>a intenção</i> e descrever <i>o desenho</i>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 24 · GRÁFICOS ESTATÍSTICOS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">03 · Seaborn</p>
+      <h2 class="anim" style="--d:.06s">Gráficos estatísticos <span class="grad">com pouquíssimo código</span></h2>
+    </header>
+    <div class="split b" style="flex:none">
+      <div class="col">
+        <div class="panel anim" style="--d:.14s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">boxplot</span><span class="lang">python</span></div>
+          <pre class="code compact" data-lang="python">sns.boxplot(data=d, x='turno', y='conta')</pre>
+        </div>
+        <p class="body anim" style="--d:.18s">A <b>distribuição</b> da conta em cada turno: mediana, quartis e os valores fora da curva — de uma linha só.</p>
+      </div>
+      <div class="col">
+        <div class="panel anim" style="--d:.24s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">scatterplot com hue</span><span class="lang">python</span></div>
+          <pre class="code compact" data-lang="python">sns.scatterplot(data=d, x='conta',
+                y='gorjeta', hue='turno')</pre>
+        </div>
+        <p class="body anim" style="--d:.28s"><span style="font-family:var(--mono)">hue='turno'</span> pinta os pontos por categoria e <b>monta a legenda sozinho</b>.</p>
+      </div>
+    </div>
+    <p class="note anim" style="--d:.36s; margin-top:clamp(14px,2.4vh,26px)">No laboratório os dados do restaurante são <b>gerados na hora com NumPy</b> — a aula roda sem internet.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 25 · MATPLOTLIB x SEABORN ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">03 · Visualização</p>
+      <h2 class="anim" style="--d:.06s">Matplotlib <span class="grad">×</span> Seaborn</h2>
+    </header>
+    <div class="vs">
+      <div class="vcol teal anim" style="--d:.16s">
+        <span class="tag">Matplotlib</span><h3>o controle</h3>
+        <ul>
+          <li>Controle fino sobre cada elemento</li>
+          <li>Customização praticamente ilimitada</li>
+          <li>Base do ecossistema de visualização</li>
+          <li>Mais linhas para o mesmo gráfico</li>
+        </ul>
+      </div>
+      <div class="x anim" style="--d:.2s">×</div>
+      <div class="vcol violet anim" style="--d:.24s">
+        <span class="tag">Seaborn</span><h3>a velocidade</h3>
+        <ul>
+          <li>Sintaxe de alto nível</li>
+          <li>Integração natural com Pandas</li>
+          <li>Gráficos estatísticos prontos</li>
+          <li>Menos código para o caso comum</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note anim" style="--d:.32s"><b>Não são alternativas.</b> O Seaborn desenha <b>por cima</b> do Matplotlib — o padrão real de trabalho é criar o gráfico com Seaborn e ajustar título, eixos e limites com Matplotlib.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 26 · DIVISOR 04 ═══════════ -->
+<section class="slide divider">
+  <div class="orb o1"></div><div class="orb o2"></div>
+  <div class="inner">
+    <div class="divnum anim">04</div>
+    <h2 class="divtitle anim" style="--d:.1s">APIs</h2>
+    <div class="rule anim" style="--d:.16s"></div>
+    <p class="divsub anim" style="--d:.22s">O que são, como funcionam e por que estão em todo projeto de dados.</p>
+    <p class="labref anim" style="--d:.3s">roda em <b>lab/04_json_xml.py</b> &nbsp;·&nbsp; o contrato vivo em <b>GET /openapi.json</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 27 · ATÉ AGORA DADOS LOCAIS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">Até agora usamos <span class="grad">dados locais</span></h2>
+      <p class="sub anim" style="--d:.12s">Mas de onde os sistemas reais obtêm seus dados?</p>
+    </header>
+    <div class="merm grow anim" style="--d:.18s">
+      <pre class="mermaid">
+flowchart LR
+    CSV["📄 Arquivo CSV"] --&gt; API
+    DB[("🗄️ Banco de Dados")] --&gt; API
+    LAKE["🌊 Data Lake"] --&gt; API
+    ERP["🏢 Sistema Corporativo"] --&gt; API
+    API["🔌 API"] --&gt; PY["🐍 Python"]
+    classDef fonte fill:#131a36,stroke:#a78bfa,stroke-width:2px,color:#ddd6fe
+    classDef api fill:#1f1a0e,stroke:#fbbf24,stroke-width:2px,color:#fde68a
+    classDef py fill:#0b1a2e,stroke:#2dd4bf,stroke-width:2px,color:#b4f5e8
+    class CSV,DB,LAKE,ERP fonte
+    class API api
+    class PY py
+      </pre>
+    </div>
+    <p class="note amber anim" style="--d:.26s">Arquivos e bancos exigem <b>acesso direto ao dado</b>. A API é a forma padronizada de um sistema <b>oferecer seus dados sem abrir sua base</b> para o mundo.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 28 · O QUE É UMA API ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">O que é uma API? <span class="grad">Pense num restaurante.</span></h2>
+    </header>
+    <div class="split b">
+      <div class="col" style="justify-content:center">
+        <ul class="clist anim" style="--d:.12s">
+          <li><span class="cdot"></span><span><b>Cliente</b> — quem faz o pedido (a sua aplicação). Você <b>nunca entra na cozinha</b>.</span></li>
+          <li><span class="cdot"></span><span><b>Garçom</b> — leva o pedido e traz a resposta. <b>É a API.</b></span></li>
+          <li><span class="cdot"></span><span><b>Cozinha</b> — onde o trabalho acontece: sistema, banco, serviço.</span></li>
+          <li><span class="cdot"></span><span><b>O cardápio é o contrato</b> — diz o que dá para pedir e o que volta. Sem cardápio, é chute.</span></li>
+        </ul>
+        <p class="note anim" style="--d:.26s"><b>API = Application Programming Interface.</b> É isso que permite que aplicações escritas em <b>linguagens diferentes</b> troquem dados de forma padronizada.</p>
+      </div>
+      <div class="merm anim" style="--d:.18s">
+        <pre class="mermaid">
+flowchart TB
+    C["🧑 você — o cliente&lt;br/&gt;(sua aplicação)"] --&gt;|faz o pedido| G["🤵 o garçom&lt;br/&gt;= a API"]
+    G --&gt;|"requisição HTTP"| K["👨‍🍳 a cozinha&lt;br/&gt;= sistema, banco, serviço"]
+    K --&gt;|prato pronto| G
+    G --&gt;|"resposta em JSON 🥗"| C
+    M["📋 o cardápio = o contrato&lt;br/&gt;(/docs · OpenAPI)"] -.-&gt;|diz o que pode pedir| C
+    classDef quem fill:#0b1a2e,stroke:#2dd4bf,stroke-width:2px,color:#b4f5e8
+    classDef api fill:#131a36,stroke:#a78bfa,stroke-width:2px,color:#ddd6fe
+    classDef coz fill:#1c1226,stroke:#f472b6,stroke-width:2px,color:#fbd5e8
+    classDef men fill:#1f1a0e,stroke:#fbbf24,stroke-width:2px,color:#fde68a
+    class C quem
+    class G api
+    class K coz
+    class M men
+        </pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 29 · REQUISIÇÃO E RESPOSTA ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">Tecnicamente: <span class="grad">requisição e resposta</span></h2>
+    </header>
+    <div class="merm grow anim" style="--d:.16s">
+      <pre class="mermaid">
+flowchart LR
+    C1["🧑 Cliente"] ==&gt;|"1 · Requisição HTTP&lt;br/&gt;URL · método · headers · body"| A1["🔌 API"]
+    A1 ==&gt;|"2 · consulta / grava"| S["🗄️ Sistema"]
+    S ==&gt;|"3 · dados"| A2["🔌 API"]
+    A2 ==&gt;|"4 · Resposta HTTP&lt;br/&gt;status · headers · body"| C2["🧑 Cliente"]
+    classDef cli fill:#0b1a2e,stroke:#2dd4bf,stroke-width:2px,color:#b4f5e8
+    classDef api fill:#131a36,stroke:#a78bfa,stroke-width:2px,color:#ddd6fe
+    classDef sis fill:#1c1226,stroke:#f472b6,stroke-width:2px,color:#fbd5e8
+    class C1,C2 cli
+    class A1,A2 api
+    class S sis
+      </pre>
+    </div>
+    <p class="note anim" style="--d:.26s"><b>Todo o resto da aula é detalhe deste ciclo.</b> O que vai na requisição (URL, método, cabeçalhos, corpo) e o que volta na resposta (status, cabeçalhos, corpo).</p>
+  </div>
+</section>
+
+<!-- ═══════════ 30 · REST x SOAP ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">REST <span class="grad">×</span> SOAP</h2>
+    </header>
+    <div class="vs">
+      <div class="vcol teal anim" style="--d:.16s">
+        <span class="tag">REST</span><h3>estilo arquitetural</h3>
+        <ul>
+          <li>Normalmente sobre HTTP</li>
+          <li>Troca de dados frequentemente em JSON</li>
+          <li>Simples e amplamente adotado</li>
+          <li>Padrão em serviços web modernos</li>
+        </ul>
+      </div>
+      <div class="x anim" style="--d:.2s">×</div>
+      <div class="vcol violet anim" style="--d:.24s">
+        <span class="tag">SOAP</span><h3>protocolo formal</h3>
+        <ul>
+          <li>Protocolo com regras rígidas</li>
+          <li>Mensagens em XML (envelope)</li>
+          <li>Contrato formal descrito em WSDL</li>
+          <li>Comum em sistemas corporativos e legados</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note anim" style="--d:.32s">Você vai encontrar <b>REST</b> na maior parte dos serviços novos e <b>SOAP</b> em integrações bancárias, governamentais e de ERPs. Reconhecer os dois basta por enquanto.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 31 · JSON x XML ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">JSON <span class="grad">×</span> XML</h2>
+      <p class="sub anim" style="--d:.12s">Os mesmos dados, dois formatos de representação.</p>
+    </header>
+    <div class="split b" style="flex:none">
+      <div class="panel anim" style="--d:.16s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">JSON</span><span class="lang">json</span></div>
+        <pre class="code" data-lang="json">{
+  "nome": "Ana",
+  "idade": 30
+}</pre>
+      </div>
+      <div class="panel anim" style="--d:.22s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">XML</span><span class="lang">xml</span></div>
+        <pre class="code" data-lang="xml">&lt;pessoa&gt;
+    &lt;nome&gt;Ana&lt;/nome&gt;
+    &lt;idade&gt;30&lt;/idade&gt;
+&lt;/pessoa&gt;</pre>
+      </div>
+    </div>
+    <p class="sub anim" style="--d:.3s; margin-top:clamp(12px,2vh,20px)">Por que <b>JSON domina</b> em APIs REST</p>
+    <div class="grid g3" style="flex:none; margin-top:10px">
+      <div class="card anim" style="--d:.34s"><h3>Mais enxuto</h3><p>menos caracteres para os mesmos dados</p></div>
+      <div class="card anim" style="--d:.38s"><h3>Natural em Python</h3><p>vira <b>dict</b> e <b>list</b> diretamente</p></div>
+      <div class="card anim" style="--d:.42s"><h3>Universal na web</h3><p>suporte nativo em qualquer linguagem</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 32 · MÉTODOS HTTP ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">Os quatro métodos HTTP essenciais</h2>
+    </header>
+    <div class="split b">
+      <div class="col" style="justify-content:center">
+        <div class="cklist">
+          <div class="ck anim" style="--d:.14s"><span class="meth get">GET</span><span class="desc">Consultar dados</span><span class="res">GET /clientes</span></div>
+          <div class="ck anim" style="--d:.19s"><span class="meth post">POST</span><span class="desc">Criar / enviar dados</span><span class="res">POST /clientes</span></div>
+          <div class="ck anim" style="--d:.24s"><span class="meth post">PUT</span><span class="desc">Atualizar dados</span><span class="res">PUT /clientes/10</span></div>
+          <div class="ck anim" style="--d:.29s"><span class="meth err">DELETE</span><span class="desc">Excluir dados</span><span class="res">DELETE /clientes/10</span></div>
+        </div>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="panel anim" style="--d:.34s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">o endpoint é o recurso</span><span class="lang">http</span></div>
+          <pre class="code compact" data-lang="sh">GET    /clientes
+GET    /clientes/10
+POST   /clientes
+PUT    /clientes/10
+DELETE /clientes/10</pre>
+        </div>
+        <p class="note anim" style="--d:.4s">O <b>mesmo caminho</b> muda de significado conforme o método. O caminho diz <b>o quê</b>; o método diz <b>o que fazer com ele</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 33 · ANATOMIA DE UMA REQUISIÇÃO ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">Anatomia de uma requisição</h2>
+    </header>
+    <div class="vs">
+      <div class="vcol teal anim" style="--d:.16s">
+        <span class="tag">Requisição · ida</span>
+        <div class="anat" style="margin-top:14px">
+          <div class="row"><code class="k">URL</code><span class="d">para onde vai o pedido<br><b>https://api.exemplo.com/produtos</b></span></div>
+          <div class="row"><code class="k">Método</code><span class="d">o que se quer fazer — <b>GET</b></span></div>
+          <div class="row"><code class="k">Headers</code><span class="d">metadados: <b>Content-Type</b>, <b>Authorization</b></span></div>
+          <div class="row"><code class="k">Params</code><span class="d">filtros: <b>?cidade=Goiania&amp;ano=2026</b></span></div>
+          <div class="row"><code class="k">Body</code><span class="d">dados enviados (POST/PUT)<br><b>{"nome": "Mouse", "preco": 150}</b></span></div>
+        </div>
+      </div>
+      <div class="x anim" style="--d:.2s">→</div>
+      <div class="vcol violet anim" style="--d:.24s">
+        <span class="tag">Resposta · volta</span>
+        <div class="anat" style="margin-top:14px">
+          <div class="row"><code class="k">Status</code><span class="d">deu certo? qual foi o problema?<br><b>200 OK</b></span></div>
+          <div class="row"><code class="k">Headers</code><span class="d">tipo do conteúdo, cache, limites<br><b>Content-Type: application/json</b></span></div>
+          <div class="row"><code class="k">Body</code><span class="d">os dados propriamente ditos<br><b>[{"produto": "A", "vendas": 100}]</b></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 34 · AUTENTICAÇÃO ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · APIs</p>
+      <h2 class="anim" style="--d:.06s">Autenticação: <span class="grad">quem está pedindo?</span></h2>
+      <p class="sub anim" style="--d:.12s">A maioria das APIs úteis exige <b>identificação</b> antes de responder.</p>
+    </header>
+    <div class="grid g3">
+      <div class="card anim" style="--d:.16s"><div class="ico">🔑</div><h3>API Key</h3><p>Uma chave fixa enviada em cada requisição. Simples, identifica a aplicação.<br><span style="font-family:var(--mono);color:var(--teal2)">X-API-Key: abc123</span></p></div>
+      <div class="card anim" style="--d:.22s"><div class="ico">🎫</div><h3>Bearer Token</h3><p>Um token, normalmente temporário, no cabeçalho Authorization.<br><span style="font-family:var(--mono);color:var(--teal2)">Authorization: Bearer eyJ…</span></p></div>
+      <div class="card anim" style="--d:.28s"><div class="ico">🪪</div><h3>OAuth</h3><p>Fluxo em que o <b>usuário permite</b> que uma aplicação acesse recursos em seu nome.<br><span style="color:var(--teal2)">"Entrar com o Google"</span></p></div>
+    </div>
+    <p class="note pink anim" style="--d:.36s"><b>Regra que não se negocia:</b> chaves e tokens <b>nunca ficam escritos no código</b>. Voltaremos a isso no módulo 05.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 35 · DIVISOR 05 ═══════════ -->
+<section class="slide divider">
+  <div class="orb o2"></div><div class="orb o3"></div>
+  <div class="inner">
+    <div class="divnum anim">05</div>
+    <h2 class="divtitle anim" style="--d:.1s">Consumindo APIs</h2>
+    <div class="rule anim" style="--d:.16s"></div>
+    <p class="divsub anim" style="--d:.22s"><b>requests</b>: trazer dados do mundo real para dentro do Python.</p>
+    <p class="labref anim" style="--d:.3s">roda em <b>lab/05_requests.py</b> — suba a API antes: <b>uv run uvicorn main:app --reload</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 36 · A BIBLIOTECA REQUESTS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · requests</p>
+      <h2 class="anim" style="--d:.06s">A biblioteca <span class="grad">requests</span></h2>
+      <p class="sub anim" style="--d:.12s">O jeito mais direto de fazer uma requisição HTTP em Python.</p>
+    </header>
+    <div class="split b">
+      <div class="panel grow anim" style="--d:.16s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">lab/05_requests.py</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">import requests
+
+url = "http://127.0.0.1:8000/produtos"
+response = requests.get(url)
+
+print(response.status_code)
+print(response.json())</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="anat">
+          <div class="row anim" style="--d:.22s"><code class="k">.status_code</code><span class="d">o número do resultado: <b>200, 404, 500</b></span></div>
+          <div class="row anim" style="--d:.27s"><code class="k">.json()</code><span class="d">converte o corpo JSON em <b>dict</b> ou <b>list</b></span></div>
+          <div class="row anim" style="--d:.32s"><code class="k">.text</code><span class="d">o corpo <b>bruto</b>, como texto</span></div>
+        </div>
+        <p class="note anim" style="--d:.38s"><span style="font-family:var(--mono)">requests.get()</span> · <span style="font-family:var(--mono)">post()</span> · <span style="font-family:var(--mono)">put()</span> · <span style="font-family:var(--mono)">delete()</span> — uma função para cada método HTTP do módulo 04.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 37 · DO JSON AO DATAFRAME ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · requests</p>
+      <h2 class="anim" style="--d:.06s">Do JSON <span class="grad">ao DataFrame</span></h2>
+      <p class="sub anim" style="--d:.12s">A ponte entre a API e a análise — provavelmente o trecho de código <b>mais repetido</b> em projetos de dados.</p>
+    </header>
+    <div class="split b">
+      <div class="panel grow anim" style="--d:.16s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">a ponte</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">import requests
+import pandas as pd
+
+response = requests.get(url)
+dados = response.json()
+
+df = pd.DataFrame(dados)</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="arc anim" style="--d:.22s; justify-content:flex-start">
+          <span class="step">API</span><span class="sep">→</span>
+          <span class="step">JSON</span><span class="sep">→</span>
+          <span class="step">requests</span><span class="sep">→</span>
+          <span class="step">Python</span><span class="sep">→</span>
+          <span class="step">DataFrame</span>
+        </div>
+        <p class="note anim" style="--d:.3s">Se o JSON for uma <b>lista de objetos com as mesmas chaves</b>, o Pandas monta a tabela sozinho: cada objeto vira uma <b>linha</b>, cada chave vira uma <b>coluna</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 38 · PARÂMETROS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · requests</p>
+      <h2 class="anim" style="--d:.06s">Parâmetros: <span class="grad">filtrando a consulta</span></h2>
+    </header>
+    <div class="split b">
+      <div class="panel grow anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">lab/05_requests.py</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">parametros = {
+    "categoria": "Informática"
+}
+
+response = requests.get(
+    url,
+    params=parametros
+)</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="out anim" style="--d:.22s"><span class="lbl">a URL que o requests monta</span>http://127.0.0.1:8000/produtos
+  ?categoria=Inform%C3%A1tica</div>
+        <ul class="clist anim" style="--d:.3s">
+          <li><span class="cdot"></span><span>Você escreve um <b>dicionário</b>, não a URL</span></li>
+          <li><span class="cdot"></span><span>Caracteres especiais são <b>codificados</b> (repare no acento)</span></li>
+          <li><span class="cdot"></span><span>Menos erros de digitação e de acento</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 39 · HEADERS E SEGREDOS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · requests</p>
+      <h2 class="anim" style="--d:.06s">Headers e autenticação <span class="grad">no código</span></h2>
+    </header>
+    <div class="split b">
+      <div class="panel grow anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">lab/05_requests.py</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">import os
+
+headers = {
+    "Authorization":
+        f"Bearer {os.getenv('API_TOKEN')}"
+}
+
+response = requests.get(
+    url,
+    headers=headers
+)</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="note pink anim" style="--d:.22s"><b>Nunca escreva tokens no código.</b> Um token comitado no repositório é um <b>vazamento de credencial</b> — mesmo em repositório privado.</div>
+        <div class="anat" style="margin-top:12px">
+          <div class="row anim" style="--d:.28s"><code class="k">env</code><span class="d">variáveis de ambiente — <b>os.getenv("API_TOKEN")</b></span></div>
+          <div class="row anim" style="--d:.33s"><code class="k">.env</code><span class="d">arquivo fora do Git — <b>python-dotenv</b> + <b>.gitignore</b></span></div>
+          <div class="row anim" style="--d:.38s"><code class="k">vault</code><span class="d">gerenciadores de segredo — <b>Vault, AWS Secrets Manager</b></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 40 · STATUS HTTP ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · requests</p>
+      <h2 class="anim" style="--d:.06s">Códigos de status HTTP</h2>
+    </header>
+    <div class="stat">
+      <div class="statcol s2 anim" style="--d:.14s"><h4>2xx · Sucesso</h4><ul>
+        <li><b>200</b> OK</li><li><b>201</b> Created</li></ul></div>
+      <div class="statcol s3 anim" style="--d:.19s"><h4>3xx · Redirecionamento</h4><ul>
+        <li><b>301</b> Moved Permanently</li><li><b>304</b> Not Modified</li></ul></div>
+      <div class="statcol s4 anim" style="--d:.24s"><h4>4xx · Erro do cliente</h4><ul>
+        <li><b>400</b> Bad Request</li><li><b>401</b> Unauthorized</li><li><b>403</b> Forbidden</li>
+        <li><b>404</b> Not Found</li><li><b>422</b> Unprocessable</li><li><b>429</b> Too Many Requests</li></ul></div>
+      <div class="statcol s5 anim" style="--d:.29s"><h4>5xx · Erro do servidor</h4><ul>
+        <li><b>500</b> Internal Server Error</li><li><b>503</b> Service Unavailable</li></ul></div>
+    </div>
+    <p class="note amber anim" style="--d:.36s"><b>401</b> é <i>"não sei quem você é"</i>; <b>403</b> é <i>"sei quem você é, mas você não pode"</i>; <b>429</b> é <i>"calma, você está pedindo demais"</i>.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 41 · TRATAMENTO DE ERROS ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · requests</p>
+      <h2 class="anim" style="--d:.06s">Tratamento de erros: <span class="grad">três níveis</span></h2>
+      <p class="sub anim" style="--d:.12s">Toda requisição pode falhar — a rede cai, o token expira, o servidor sai do ar.</p>
+    </header>
+    <div class="split b" style="flex:none">
+      <div class="panel anim" style="--d:.16s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">1 · verificar o status</span><span class="lang">python</span></div>
+        <pre class="code compact" data-lang="python">if response.status_code == 200:
+    dados = response.json()
+else:
+    print("Erro:", response.status_code)</pre>
+      </div>
+      <div class="panel anim" style="--d:.22s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">2 · deixar o requests avisar</span><span class="lang">python</span></div>
+        <pre class="code compact" data-lang="python">response = requests.get(url)
+
+response.raise_for_status()
+dados = response.json()</pre>
+      </div>
+    </div>
+    <div class="panel anim" style="--d:.3s; margin-top:clamp(10px,1.6vh,18px)">
+      <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">3 · tratar a exceção — versão de produção</span><span class="lang">python</span></div>
+      <pre class="code compact" data-lang="python">try:
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+    dados = response.json()
+except requests.exceptions.RequestException as erro:
+    print("Erro ao acessar API:", erro)</pre>
+    </div>
+    <p class="note anim" style="--d:.38s"><b>timeout</b> evita travar o script · <b>raise_for_status()</b> converte 4xx e 5xx em exceção · <b>RequestException</b> cobre rede, DNS e timeout</p>
+  </div>
+</section>
+
+<!-- ═══════════ 42 · O PIPELINE DE CONSUMO ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · requests</p>
+      <h2 class="anim" style="--d:.06s">O pipeline de consumo, <span class="grad">do início ao fim</span></h2>
+    </header>
+    <div class="grid g3">
+      <div class="card anim" style="--d:.16s"><div class="ico">📥</div><h3>OBTER</h3><p><b>API</b> ↓<br><b>requests</b> ↓<br><b>JSON</b></p></div>
+      <div class="card anim" style="--d:.22s"><div class="ico">🧹</div><h3>PREPARAR</h3><p><b>Pandas</b> ↓<br><b>Limpeza</b> ↓<br><b>NumPy</b></p></div>
+      <div class="card anim" style="--d:.28s"><div class="ico">💡</div><h3>ENTENDER</h3><p><b>Análise</b> ↓<br><b>Matplotlib / Seaborn</b> ↓<br><b>Insight</b></p></div>
+    </div>
+    <p class="note anim" style="--d:.36s">Cada etapa tem uma ferramenta. <b>Nenhuma delas resolve o problema sozinha.</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 43 · DIVISOR 06 ═══════════ -->
 <section class="slide divider">
   <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
   <div class="inner">
@@ -572,7 +1583,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 6 · INVERTENDO O PAPEL ═══════════ -->
+<!-- ═══════════ 44 · INVERTENDO O PAPEL ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -598,7 +1609,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 7 · O QUE É FASTAPI ═══════════ -->
+<!-- ═══════════ 45 · O QUE É FASTAPI ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -620,7 +1631,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 8 · NOSSA PRIMEIRA API ═══════════ -->
+<!-- ═══════════ 46 · NOSSA PRIMEIRA API ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -654,7 +1665,7 @@ def inicio():
   </div>
 </section>
 
-<!-- ═══════════ 9 · ENDPOINT DE DADOS ═══════════ -->
+<!-- ═══════════ 47 · ENDPOINT DE DADOS ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -685,7 +1696,7 @@ def listar_produtos():
   </div>
 </section>
 
-<!-- ═══════════ 10 · PARÂMETROS NO ENDPOINT ═══════════ -->
+<!-- ═══════════ 48 · PARÂMETROS NO ENDPOINT ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -708,7 +1719,7 @@ def buscar_produto(produto_id: int):
   </div>
 </section>
 
-<!-- ═══════════ 11 · POST E PYDANTIC ═══════════ -->
+<!-- ═══════════ 49 · POST E PYDANTIC ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -744,7 +1755,7 @@ def criar_produto(produto: Produto):
   </div>
 </section>
 
-<!-- ═══════════ 12 · O MOMENTO UAU: /docs ═══════════ -->
+<!-- ═══════════ 50 · O MOMENTO UAU: /docs ═══════════ -->
 <section class="slide">
   <div class="inner center">
     <p class="eyebrow anim">06 · FastAPI · 🤯 o momento uau</p>
@@ -767,7 +1778,7 @@ def criar_produto(produto: Produto):
   </div>
 </section>
 
-<!-- ═══════════ 13 · A ORDEM DAS ROTAS IMPORTA ═══════════ -->
+<!-- ═══════════ 51 · A ORDEM DAS ROTAS IMPORTA ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -800,7 +1811,7 @@ def buscar_produto(produto_id: int): ...</pre>
   </div>
 </section>
 
-<!-- ═══════════ 14 · CIÊNCIA DE DADOS SERVIDA POR UMA API ═══════════ -->
+<!-- ═══════════ 52 · CIÊNCIA DE DADOS SERVIDA POR UMA API ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -844,7 +1855,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 15 · A STACK INTEIRA VIROU ENDPOINT ═══════════ -->
+<!-- ═══════════ 53 · A STACK INTEIRA VIROU ENDPOINT ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -878,7 +1889,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 16 · BOAS PRÁTICAS ═══════════ -->
+<!-- ═══════════ 54 · BOAS PRÁTICAS ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -900,7 +1911,43 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 17 · A TESE ═══════════ -->
+<!-- ═══════════ 55 · A STACK COMPLETA ═══════════ -->
+<section class="slide">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">A stack completa</p>
+      <h2 class="anim" style="--d:.06s">Do dado bruto <span class="grad">até o resultado publicado</span></h2>
+    </header>
+    <div class="merm grow anim" style="--d:.16s">
+      <pre class="mermaid">
+flowchart LR
+    subgraph IN["📥 ENTRADA"]
+        A1["Arquivos · Banco"] --&gt; A2["🔌 API"] --&gt; A3["📦 requests"]
+    end
+    subgraph PROC["⚙️ PROCESSAMENTO E ANÁLISE"]
+        B1["🐼 Pandas · DataFrame"] --&gt; B2["🧹 Limpeza"] --&gt; B3["🔢 NumPy · cálculo"] --&gt; B4["📊 Matplotlib / Seaborn"]
+    end
+    subgraph OUT["📤 SAÍDA"]
+        C1["💡 Insights"] --&gt; C2["⚡ FastAPI"] --&gt; C3["🌐 Outros sistemas"]
+    end
+    A3 ==&gt; B1
+    B4 ==&gt; C1
+    classDef io fill:#0b1a2e,stroke:#2dd4bf,stroke-width:2px,color:#b4f5e8
+    classDef proc fill:#131a36,stroke:#a78bfa,stroke-width:2px,color:#ddd6fe
+    classDef out fill:#1c1226,stroke:#f472b6,stroke-width:2px,color:#fbd5e8
+    class A1,A2,A3 io
+    class B1,B2,B3,B4 proc
+    class C1,C2,C3 out
+    style IN fill:#0a0f1e,stroke:#2a3a63,stroke-dasharray:7 7,color:#9db0d3
+    style PROC fill:#0a0f1e,stroke:#2a3a63,stroke-dasharray:7 7,color:#9db0d3
+    style OUT fill:#0a0f1e,stroke:#2a3a63,stroke-dasharray:7 7,color:#9db0d3
+      </pre>
+    </div>
+    <p class="note anim" style="--d:.26s">Um mesmo dado percorre a pilha inteira: <b>entra por uma API, vira tabela, vira número, vira gráfico e volta a ser API.</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 56 · A TESE ═══════════ -->
 <section class="slide">
   <div class="orb o2"></div>
   <div class="inner center">
@@ -909,7 +1956,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 18 · DIVISOR 07 ═══════════ -->
+<!-- ═══════════ 57 · DIVISOR 07 ═══════════ -->
 <section class="slide divider">
   <div class="orb o1"></div><div class="orb o3"></div>
   <div class="inner">
@@ -921,7 +1968,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 19 · DESAFIO ═══════════ -->
+<!-- ═══════════ 58 · DESAFIO ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -956,7 +2003,7 @@ flowchart LR
   </div>
 </section>
 
-<!-- ═══════════ 20 · SOLUÇÃO PARTE 1 ═══════════ -->
+<!-- ═══════════ 59 · SOLUÇÃO PARTE 1 ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -996,7 +2043,7 @@ nome = mais_caro["produto"]          # "Notebook"</pre>
   </div>
 </section>
 
-<!-- ═══════════ 21 · SOLUÇÃO PARTE 2 ═══════════ -->
+<!-- ═══════════ 60 · SOLUÇÃO PARTE 2 ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -1028,7 +2075,19 @@ def preco_medio():
   </div>
 </section>
 
-<!-- ═══════════ 22 · QUIZ 1-3 ═══════════ -->
+<!-- ═══════════ 61 · DIVISOR 08 ═══════════ -->
+<section class="slide divider">
+  <div class="orb o1"></div><div class="orb o2"></div>
+  <div class="inner">
+    <div class="divnum anim">08</div>
+    <h2 class="divtitle anim" style="--d:.1s">Quiz de fechamento</h2>
+    <div class="rule anim" style="--d:.16s"></div>
+    <p class="divsub anim" style="--d:.22s">Sete perguntas rápidas para fixar o conteúdo.</p>
+    <p class="labref anim" style="--d:.3s">roda em <b>lab/08_quiz.py</b> · gabarito: <b>--respostas</b></p>
+  </div>
+</section>
+
+<!-- ═══════════ 62 · QUIZ 1-3 ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -1052,7 +2111,7 @@ def preco_medio():
   </div>
 </section>
 
-<!-- ═══════════ 23 · QUIZ 4-7 ═══════════ -->
+<!-- ═══════════ 63 · QUIZ 4-7 ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -1069,7 +2128,7 @@ def preco_medio():
   </div>
 </section>
 
-<!-- ═══════════ 24 · RESPOSTAS ═══════════ -->
+<!-- ═══════════ 64 · RESPOSTAS ═══════════ -->
 <section class="slide">
   <div class="inner">
     <header class="shead">
@@ -1088,7 +2147,7 @@ def preco_medio():
   </div>
 </section>
 
-<!-- ═══════════ 25 · O QUE LEVAR ═══════════ -->
+<!-- ═══════════ 65 · O QUE LEVAR ═══════════ -->
 <section class="slide">
   <div class="orb o3"></div>
   <div class="inner">
