@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastAPI: seu primeiro endpoint — SentimentAPI · PUC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;800&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<style>
+/* ───────────────────────── BASE ───────────────────────── */
+:root{
+  --bg:#05070f; --bg2:#090e1c; --panel:#0c1322; --panel2:#101a30;
+  --line:#1c2740; --line2:#2a3a63;
+  --text:#e9effc; --muted:#9db0d3; --faint:#6b7ca0;
+  --teal:#2dd4bf; --teal2:#5eead4; --violet:#a78bfa; --pink:#f472b6;
+  --amber:#fbbf24; --green:#86efac; --red:#fb7185; --blue:#7dd3fc;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(60vmax 40vmax at 12% -10%, rgba(45,212,191,.07), transparent 55%),
+    radial-gradient(55vmax 38vmax at 105% 15%, rgba(167,139,250,.08), transparent 55%),
+    radial-gradient(45vmax 35vmax at 50% 120%, rgba(244,114,182,.06), transparent 55%);
+}
+
+/* ───────────────────────── DECK / SLIDES ───────────────────────── */
+#deck{position:fixed; inset:0}
+.slide{
+  position:absolute; inset:0; opacity:0; pointer-events:none; z-index:1;
+  transition:opacity .45s ease;
+}
+.slide.active{opacity:1; pointer-events:auto; z-index:5}
+.slide .inner{
+  height:100%; display:flex; flex-direction:column;
+  padding:clamp(20px,3.2vh,44px) clamp(26px,4.5vw,72px) clamp(58px,8vh,80px);
+  transform:translateY(12px); transition:transform .5s ease;
+  position:relative; z-index:2;
+}
+.slide.active .inner{transform:none}
+
+/* animação de entrada em etapas */
+.slide .anim{opacity:0; transform:translateY(16px);
+  transition:opacity .55s ease var(--d,0s), transform .55s ease var(--d,0s)}
+.slide.active .anim{opacity:1; transform:none}
+
+.center{justify-content:center; align-items:center; text-align:center}
+
+/* ───────────────────────── TIPOGRAFIA ───────────────────────── */
+.eyebrow{
+  letter-spacing:.3em; font-weight:800; color:var(--teal);
+  font-size:clamp(.7rem,.95vw,.95rem); text-transform:uppercase; margin:0 0 12px;
+}
+h2{
+  font-family:'Space Grotesk',Inter,sans-serif; font-weight:700;
+  font-size:clamp(1.7rem,3.5vw,3.2rem); margin:0; line-height:1.08;
+}
+h2 .grad{
+  background:linear-gradient(92deg,var(--teal2),var(--violet) 60%,var(--pink));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.sub{color:var(--muted); font-size:clamp(1rem,1.5vw,1.32rem); margin-top:12px; max-width:72ch; line-height:1.5}
+.sub b, .body b{color:var(--text)}
+.rule{height:3px; width:88px; border-radius:99px; margin-top:16px;
+  background:linear-gradient(90deg,var(--teal),var(--violet))}
+.display{
+  font-family:'Space Grotesk',Inter,sans-serif; font-weight:700;
+  font-size:clamp(2.5rem,6vw,5.2rem); line-height:1.05; margin:.2em 0;
+}
+.body{font-size:clamp(1rem,1.45vw,1.3rem); line-height:1.55; color:var(--muted)}
+.body.big{font-size:clamp(1.15rem,1.9vw,1.7rem); color:var(--muted); max-width:56ch}
+
+/* header padrão de slide */
+.shead{flex:none; margin-bottom:clamp(12px,2vh,24px)}
+.shead .rule{margin-bottom:0}
+
+/* ───────────────────────── ORBS (título) ───────────────────────── */
+.orb{position:absolute; border-radius:50%; filter:blur(80px); opacity:.45; z-index:0; animation:float 16s ease-in-out infinite alternate}
+.o1{width:44vmin;height:44vmin; background:rgba(45,212,191,.35); top:-8%; left:-6%}
+.o2{width:40vmin;height:40vmin; background:rgba(167,139,250,.35); top:12%; right:-8%; animation-delay:-5s}
+.o3{width:36vmin;height:36vmin; background:rgba(244,114,182,.28); bottom:-12%; left:32%; animation-delay:-9s}
+@keyframes float{from{transform:translate(0,0) scale(1)} to{transform:translate(4vmin,-3vmin) scale(1.12)}}
+
+/* ───────────────────────── PILLS / TAGS ───────────────────────── */
+.tagrow{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:22px}
+.pill{
+  border:1px solid var(--line2); background:rgba(45,212,191,.07); color:var(--teal2);
+  padding:.45em 1em; border-radius:99px; font-size:clamp(.8rem,1vw,1rem); font-weight:600;
+}
+.credit{margin-top:26px; color:var(--faint); font-size:clamp(.85rem,1.05vw,1rem)}
+.credit strong{color:var(--muted)}
+.hint{margin-top:14px; color:var(--faint); font-size:.82rem; letter-spacing:.05em}
+
+/* chips de método HTTP */
+.meth{font-family:var(--mono); font-weight:600; font-size:clamp(.72rem,.9vw,.88rem);
+  padding:.28em .8em; border-radius:8px; border:1px solid; white-space:nowrap}
+.meth.get{color:var(--teal2); border-color:rgba(45,212,191,.5); background:rgba(45,212,191,.1)}
+.meth.post{color:#f9a8d4; border-color:rgba(244,114,182,.5); background:rgba(244,114,182,.1)}
+.meth.err{color:#fda4af; border-color:rgba(251,113,133,.55); background:rgba(251,113,133,.12)}
+
+/* ───────────────────────── CARDS ───────────────────────── */
+.grid{display:grid; gap:clamp(12px,1.4vw,20px); flex:1; min-height:0; align-content:center}
+.g3{grid-template-columns:repeat(3,1fr)}
+.card{
+  background:linear-gradient(180deg,var(--panel2),var(--bg2));
+  border:1px solid var(--line); border-radius:16px;
+  padding:clamp(14px,1.6vw,24px); text-align:left;
+}
+.card .ico{font-size:clamp(1.5rem,2.4vw,2.3rem); line-height:1}
+.card h3{font-family:'Space Grotesk',sans-serif; font-size:clamp(1rem,1.45vw,1.3rem); margin:.55em 0 .3em}
+.card p{color:var(--muted); font-size:clamp(.84rem,1.12vw,1.02rem); line-height:1.45; margin:0}
+.card p b{color:var(--text)}
+
+/* ───────────────────────── CALLOUTS ───────────────────────── */
+.note{
+  border-left:3px solid var(--teal); background:rgba(45,212,191,.07);
+  padding:clamp(10px,1.4vh,16px) clamp(14px,1.4vw,20px); border-radius:0 12px 12px 0;
+  font-size:clamp(.92rem,1.25vw,1.12rem); line-height:1.5; color:var(--muted);
+}
+.note b{color:var(--teal2)}
+.note.pink{border-color:var(--pink); background:rgba(244,114,182,.07)}
+.note.pink b{color:#f9a8d4}
+.note.amber{border-color:var(--amber); background:rgba(251,191,36,.06)}
+.note.amber b{color:var(--amber)}
+
+/* ───────────────────────── LISTAS ───────────────────────── */
+.clist{margin:6px 0 0; padding:0; list-style:none}
+.clist li{display:flex; gap:14px; margin:clamp(10px,1.7vh,18px) 0; font-size:clamp(1rem,1.4vw,1.25rem); line-height:1.5; color:var(--muted)}
+.clist li b{color:var(--text)}
+.clist .cdot{
+  flex:none; width:11px; height:11px; border-radius:4px; margin-top:.55em;
+  background:linear-gradient(135deg,var(--teal),var(--violet));
+}
+
+/* ───────────────────────── CÓDIGO ───────────────────────── */
+.panel{
+  background:#0a0f1e; border:1px solid var(--line2); border-radius:14px;
+  overflow:hidden; box-shadow:0 18px 50px rgba(0,0,0,.45); text-align:left; min-width:0;
+}
+.panel.grow{flex:1; min-height:0; display:flex; flex-direction:column}
+.code-bar{
+  display:flex; align-items:center; gap:8px; padding:9px 14px;
+  background:#0d1526; border-bottom:1px solid var(--line); flex:none;
+}
+.d3{display:flex; gap:6px}
+.d3 i{width:9px;height:9px;border-radius:50%;display:block}
+.d3 i:nth-child(1){background:#ff5f57}.d3 i:nth-child(2){background:#febc2e}.d3 i:nth-child(3){background:#28c840}
+.fname{font-family:var(--mono); font-size:clamp(.68rem,.85vw,.82rem); color:var(--muted); margin-left:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.lang{margin-left:auto; font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); border:1px solid var(--line); padding:.15em .7em; border-radius:99px}
+pre.code{
+  margin:0; padding:clamp(12px,1.5vh,20px) clamp(14px,1.5vw,22px);
+  font-family:var(--mono); font-size:clamp(.76rem,1.02vw,1.06rem); line-height:1.62;
+  color:#d9e4f9; overflow:auto; white-space:pre; flex:1; min-height:0;
+}
+pre.code.compact{font-size:clamp(.7rem,.92vw,.96rem); line-height:1.55}
+.tok-com{color:#5f7190; font-style:italic}
+.tok-str{color:#86efac}
+.tok-kw{color:#f472b6}
+.tok-bi{color:#7dd3fc}
+.tok-ty{color:#a78bfa}
+.tok-fn{color:#67e8f9; font-weight:600}
+.tok-num{color:#fbbf24}
+.tok-dec{color:#2dd4bf; font-weight:600}
+.tok-p{color:#2dd4bf; font-weight:700}
+.tok-mod{color:#fbbf24}
+.tok-cls{color:#c4b5fd; font-weight:600}
+
+/* badge de status HTTP */
+.http-badge{
+  display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-weight:700;
+  color:#fda4af; background:rgba(251,113,133,.13); border:1px solid rgba(251,113,133,.55);
+  border-radius:10px; padding:.3em .9em; font-size:clamp(.8rem,1vw,1rem);
+}
+.http-badge.ok{color:#86efac; background:rgba(134,239,172,.1); border-color:rgba(134,239,172,.45)}
+
+/* ───────────────────────── MERMAID ───────────────────────── */
+.merm{
+  position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--line);
+  background:radial-gradient(120% 130% at 20% 0%, #0c1424 0%, #070b16 62%);
+  min-height:0; cursor:grab; touch-action:none;
+}
+.merm:active{cursor:grabbing}
+.merm pre.mermaid{margin:0; font-family:var(--mono)}
+.merm .dctrl{position:absolute; bottom:12px; right:12px; display:flex; gap:7px; z-index:4}
+.merm .dctrl button{
+  width:34px; height:34px; border-radius:9px; cursor:pointer; font-size:15px;
+  background:rgba(9,14,28,.88); border:1px solid var(--line2); color:var(--muted);
+}
+.merm .dctrl button:hover{color:var(--teal2); border-color:var(--teal)}
+
+/* ───────────────────────── LAYOUTS ───────────────────────── */
+.split{display:grid; gap:clamp(16px,2vw,32px); flex:1; min-height:0}
+.split.a{grid-template-columns:minmax(300px,5fr) 7fr}
+.split.b{grid-template-columns:minmax(340px,6fr) 6fr}
+.split.c{grid-template-columns:7fr minmax(300px,5fr)}
+.col{display:flex; flex-direction:column; gap:clamp(10px,1.5vh,16px); min-height:0; min-width:0}
+
+/* passos do arco (slide 2) */
+.arc{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:clamp(8px,1.4vh,14px)}
+.arc .step{
+  border:1px solid var(--line2); background:var(--panel); color:var(--text);
+  border-radius:12px; padding:.5em 1em; font-weight:600; font-size:clamp(.85rem,1.15vw,1.05rem);
+}
+.arc .step small{display:block; color:var(--faint); font-weight:400; font-size:.78em}
+.arc .sep{color:var(--teal); font-size:1.3em}
+
+/* chips "5 linhas, 5 conceitos" (slide 5) */
+.chips{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.chip{
+  display:flex; align-items:center; gap:10px; border:1px solid var(--line);
+  background:var(--panel); border-radius:12px; padding:.55em .95em;
+  font-size:clamp(.78rem,1vw,.95rem); color:var(--muted);
+}
+.chip code{font-family:var(--mono); color:var(--teal2); font-size:.95em; white-space:nowrap}
+.chip .n{font-family:'Space Grotesk'; font-weight:700; color:var(--violet); font-size:1.05em}
+
+/* anatomia do comando (slide 6) */
+.anat{display:flex; flex-direction:column; gap:10px}
+.anat .row{
+  display:flex; align-items:baseline; gap:14px; background:var(--panel);
+  border:1px solid var(--line); border-radius:12px; padding:.7em 1em;
+}
+.anat code.k{font-family:var(--mono); color:var(--amber); font-weight:600; font-size:clamp(.85rem,1.1vw,1.05rem); min-width:5.2em}
+.anat .d{color:var(--muted); font-size:clamp(.85rem,1.15vw,1.02rem); line-height:1.4}
+.anat .d b{color:var(--text)}
+
+.urls{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.urlc{border:1px solid var(--line); border-radius:12px; padding:.8em 1em; background:var(--panel)}
+.urlc code{font-family:var(--mono); color:var(--teal2); font-size:clamp(.78rem,1vw,.95rem); word-break:break-all}
+.urlc p{margin:.35em 0 0; color:var(--muted); font-size:clamp(.76rem,1vw,.9rem); line-height:1.35}
+
+/* ───────────── SLIDE UAU (/docs) ───────────── */
+.docs-big{
+  font-family:'Space Grotesk',sans-serif; font-weight:700; line-height:1;
+  font-size:clamp(3.2rem,8.5vw,7.2rem);
+  background:linear-gradient(92deg,#5eead4,#a78bfa 55%,#f472b6);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 0 30px rgba(167,139,250,.35));
+}
+.shot{width:min(880px,92%); margin:clamp(14px,2.6vh,26px) auto 0; text-align:left;
+  animation:pulse 3.4s ease-in-out infinite}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 1px var(--line2), 0 0 34px rgba(45,212,191,.14)}
+  50%{box-shadow:0 0 0 1px rgba(45,212,191,.65), 0 0 54px rgba(45,212,191,.3)}
+}
+.shot .bar{display:flex; align-items:center; gap:10px; padding:10px 14px; background:#0d1526; border:1px solid var(--line2); border-bottom:none; border-radius:14px 14px 0 0}
+.shot .urlbox{
+  flex:1; font-family:var(--mono); font-size:clamp(.72rem,.95vw,.9rem); color:var(--teal2);
+  background:#070b16; border:1px solid var(--line); border-radius:99px; padding:.45em 1em; text-align:center;
+}
+.shot .body-shot{
+  border:2px dashed var(--line2); border-top:none; border-radius:0 0 14px 14px;
+  min-height:clamp(150px,30vh,300px); display:flex; flex-direction:column; gap:8px;
+  align-items:center; justify-content:center; text-align:center;
+  background:repeating-linear-gradient(-45deg, rgba(28,39,64,.16) 0 14px, transparent 14px 28px), #080d19;
+  padding:18px;
+}
+.shot .body-shot .big{font-weight:800; color:var(--muted); font-size:clamp(.95rem,1.35vw,1.2rem); letter-spacing:.04em}
+.shot .body-shot small{color:var(--faint); font-size:clamp(.75rem,.95vw,.9rem); max-width:56ch; line-height:1.5}
+
+/* ───────────── CHECKLIST DA DEMO ───────────── */
+.cklist{display:flex; flex-direction:column; gap:clamp(8px,1.15vh,12px); flex:1; justify-content:center; max-width:1180px; width:100%; margin:0 auto}
+.ck{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  background:linear-gradient(90deg, rgba(12,19,34,.95), rgba(12,19,34,.45));
+  border:1px solid var(--line); border-radius:12px; padding:clamp(8px,1.1vh,13px) clamp(12px,1.4vw,18px);
+}
+.ckn{
+  flex:none; width:30px; height:30px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(45,212,191,.1); border:1px solid rgba(45,212,191,.45);
+  color:var(--teal2); font-family:'Space Grotesk'; font-weight:700; font-size:.92rem;
+}
+.ck .path{font-family:var(--mono); font-size:clamp(.8rem,1.05vw,1rem); color:var(--text); word-break:break-all}
+.ck .path em{color:var(--faint); font-style:normal}
+.ck .desc{color:var(--muted); font-size:clamp(.78rem,1vw,.94rem); flex:1 1 200px; min-width:0}
+.ck .res{font-family:var(--mono); font-size:clamp(.72rem,.92vw,.88rem); color:var(--teal2);
+  border:1px dashed var(--line2); border-radius:8px; padding:.25em .7em; white-space:nowrap}
+.ck .res.bad{color:#fda4af; border-color:rgba(251,113,133,.5)}
+
+/* ───────────── FECHAMENTO ───────────── */
+.quote{
+  font-family:'Space Grotesk',sans-serif; font-weight:700;
+  font-size:clamp(1.7rem,3.4vw,3rem); line-height:1.15;
+  background:linear-gradient(92deg,var(--teal2),var(--violet));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.nexts{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:clamp(10px,1.6vh,16px)}
+.nexts li{display:flex; gap:14px; align-items:flex-start; font-size:clamp(.95rem,1.35vw,1.2rem); line-height:1.5; color:var(--muted)}
+.nexts li b{color:var(--text)}
+.nexts .ico{flex:none; font-size:1.25em; margin-top:.05em}
+
+/* ───────────────────────── CONTROLES ───────────────────────── */
+#progress{position:fixed; top:0; left:0; height:4px; width:0; z-index:60;
+  background:linear-gradient(90deg,var(--teal),var(--violet)); transition:width .35s ease}
+#snum{position:fixed; right:18px; bottom:15px; z-index:60;
+  font-family:var(--mono); font-size:.85rem; color:var(--faint)}
+#brand{position:fixed; left:20px; bottom:15px; z-index:60;
+  font-size:.76rem; color:var(--faint); letter-spacing:.05em}
+#dots{position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+  display:flex; gap:9px; z-index:60}
+#dots button{width:10px; height:10px; border-radius:50%; padding:0; cursor:pointer;
+  border:1px solid var(--line2); background:transparent}
+#dots button.on{background:var(--teal); border-color:var(--teal); box-shadow:0 0 10px rgba(45,212,191,.7)}
+.arw{
+  position:fixed; top:50%; transform:translateY(-50%); z-index:60;
+  width:52px; height:52px; border-radius:50%; cursor:pointer; font-size:20px;
+  background:rgba(10,15,30,.72); border:1px solid var(--line2); color:var(--muted);
+  backdrop-filter:blur(4px);
+}
+.arw:hover{color:var(--teal2); border-color:var(--teal)}
+.arw:disabled{opacity:.18; cursor:default}
+#al{left:14px} #ar{right:14px}
+
+@media (max-width:900px){
+  .split.a,.split.b,.split.c{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .urls{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<button class="arw" id="al" aria-label="anterior">‹</button>
+<button class="arw" id="ar" aria-label="próximo">›</button>
+<div id="dots"></div>
+<div id="snum">01 / 12</div>
+<div id="brand">SentimentAPI · FastAPI na prática — prof. Leonardo Afonso (PUC) · Ricardo da Costa</div>
+
+<div id="deck">
+
+<!-- ═══════════ SLIDE 1 · TÍTULO ═══════════ -->
+<section class="slide active" id="s0">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <div class="inner center">
+    <p class="eyebrow anim">Aula ao vivo · PUC · ≈ 40 minutos</p>
+    <h1 class="display anim" style="--d:.08s">FastAPI: <span class="grad">seu primeiro endpoint</span></h1>
+    <div class="rule anim" style="--d:.16s"></div>
+    <p class="body big anim" style="--d:.22s">Uma API com <b>dados</b> e <b>IA</b> em ~40 minutos — demo para a aula do prof. Leonardo Afonso (PUC)</p>
+    <div class="tagrow anim" style="--d:.3s">
+      <span class="pill">🐍 Python</span>
+      <span class="pill">⚡ FastAPI</span>
+      <span class="pill">🎬 avaliações de filmes</span>
+      <span class="pill">🧠 sentimento em PT-BR</span>
+      <span class="pill">0 pré-requisitos</span>
+    </div>
+    <p class="credit anim" style="--d:.4s">apresenta: <strong>Ricardo da Costa</strong> &nbsp;·&nbsp; anfitrião: prof. <strong>Leonardo Afonso</strong></p>
+    <p class="hint anim" style="--d:.52s">← → navegam · clique nos cantos também · roda a roda dá zoom nos diagramas</p>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 2 · O QUE VAMOS CONSTRUIR ═══════════ -->
+<section class="slide" id="s1">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">02 · O plano</p>
+      <h2 class="anim" style="--d:.06s">O que vamos construir hoje</h2>
+      <p class="sub anim" style="--d:.12s">A <b>SentimentAPI 🎬</b> — uma API de avaliações de filmes que lê o texto em português e devolve o <b>sentimento</b>: positivo, negativo ou neutro.</p>
+    </header>
+    <div class="arc anim" style="--d:.18s">
+      <span class="step">1 · hello world<small>o primeiro endpoint</small></span><span class="sep">→</span>
+      <span class="step">2 · dados<small>guardar &amp; listar avaliações</small></span><span class="sep">→</span>
+      <span class="step">3 · mini-IA<small>análise de sentimento</small></span><span class="sep">→</span>
+      <span class="step">4 · documentação viva<small>/docs se escreve sozinho</small></span>
+    </div>
+    <div class="merm grow anim" style="--d:.24s">
+      <pre class="mermaid">
+flowchart LR
+    subgraph MAIN["📄 main.py — um arquivo só"]
+        API["⚡ FastAPI + uvicorn&lt;br/&gt;rotas · validação · docs"]
+        IA["🧠 classificar()&lt;br/&gt;léxico: palavra → peso"]
+        BD[("🗂️ avaliações&lt;br/&gt;dict em memória")]
+        API --&gt; IA
+        API --&gt; BD
+    end
+    CLI(["🧑 CLIENTE&lt;br/&gt;navegador · Swagger /docs"]) ==&gt;|"HTTP · GET / POST"| API
+    API ==&gt;|"JSON de volta 🎁"| CLI
+    classDef cli fill:#0b1a2e,stroke:#2dd4bf,stroke-width:2px,color:#b4f5e8
+    classDef eng fill:#131a36,stroke:#a78bfa,stroke-width:2px,color:#ddd6fe
+    classDef data fill:#0f1f1c,stroke:#34d399,stroke-width:2px,color:#a7f3d0
+    class CLI cli
+    class API eng
+    class IA,BD data
+    style MAIN fill:#0a0f1e,stroke:#2a3a63,stroke-dasharray:7 7,color:#9db0d3
+      </pre>
+    </div>
+    <p class="note anim" style="--d:.3s">Um arquivo (<b>main.py</b>), rodando local com <b>uvicorn</b>. Sem banco, sem Docker, sem culpa — só Python puro que um iniciante lê de ponta a ponta.</p>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 3 · O QUE É UMA API ═══════════ -->
+<section class="slide" id="s2">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">03 · Conceito</p>
+      <h2 class="anim" style="--d:.06s">O que é uma API? <span class="grad">Pense num restaurante.</span></h2>
+    </header>
+    <div class="split b">
+      <div class="col" style="justify-content:center">
+        <ul class="clist anim" style="--d:.12s">
+          <li><span class="cdot"></span><span><b>Você faz o pedido</b> — pelo navegador, pelo Swagger ou por outro programa. Você <b>nunca entra na cozinha</b>.</span></li>
+          <li><span class="cdot"></span><span><b>O garçom (a API) leva o pedido à cozinha</b> (o servidor) e volta com o prato — em <b>JSON</b>, o formato que programas entendem.</span></li>
+          <li><span class="cdot"></span><span><b>O cardápio é o contrato</b>: diz o que dá pra pedir, com quais ingredientes, e o que volta. Sem cardápio, é chute.</span></li>
+        </ul>
+        <p class="note anim" style="--d:.24s">No nosso caso o garçom se chama <b>FastAPI</b> — e o cardápio <b>se escreve sozinho</b>. 😏</p>
+      </div>
+      <div class="merm anim" style="--d:.18s">
+        <pre class="mermaid">
+flowchart TB
+    C["🧑 você — o cliente"] --&gt;|faz o pedido| G["🤵 o garçom&lt;br/&gt;= a API"]
+    G --&gt;|"requisição HTTP"| K["👨‍🍳 a cozinha&lt;br/&gt;= o servidor (nossa lógica)"]
+    K --&gt;|prato pronto| G
+    G --&gt;|"resposta em JSON 🥗"| C
+    M["📋 o cardápio = o contrato&lt;br/&gt;(/docs · OpenAPI)"] -.-&gt;|diz o que pode pedir| C
+    classDef quem fill:#0b1a2e,stroke:#2dd4bf,stroke-width:2px,color:#b4f5e8
+    classDef api fill:#131a36,stroke:#a78bfa,stroke-width:2px,color:#ddd6fe
+    classDef coz fill:#1c1226,stroke:#f472b6,stroke-width:2px,color:#fbd5e8
+    classDef men fill:#1f1a0e,stroke:#fbbf24,stroke-width:2px,color:#fde68a
+    class C quem
+    class G api
+    class K coz
+    class M men
+        </pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 4 · POR QUE FASTAPI ═══════════ -->
+<section class="slide" id="s3">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">04 · Por quê?</p>
+      <h2 class="anim" style="--d:.06s">Por que <span class="grad">FastAPI</span>?</h2>
+      <p class="sub anim" style="--d:.12s">Em termos de garçom: <i>“o FastAPI já chega com o cardápio escrito, conferido e traduzido.”</i></p>
+    </header>
+    <div class="grid g3">
+      <div class="card anim" style="--d:.16s"><div class="ico">🐍</div><h3>Pythônico e moderno</h3><p>Os <b>type hints</b> que você já (vai) conhecer fazem o trabalho pesado. O código parece Python, não configuração.</p></div>
+      <div class="card anim" style="--d:.22s"><div class="ico">✅</div><h3>Validação automática</h3><p><b>Pydantic</b> confere o pedido antes de chegar na cozinha. Veio errado? <b>422</b>, sem drama e com a explicação do erro.</p></div>
+      <div class="card anim" style="--d:.28s"><div class="ico">📚</div><h3>Documentação automática</h3><p><b>Swagger UI</b> (<span style="font-family:var(--mono)">/docs</span>) e <b>ReDoc</b> nascem do seu código. O cardápio <b>se escreve sozinho</b>.</p></div>
+      <div class="card anim" style="--d:.34s"><div class="ico">⚡</div><h3>Rápido e async</h3><p><b>Starlette + Pydantic</b> por baixo; <b>async/await</b> nativo quando a coisa fica séria.</p></div>
+      <div class="card anim" style="--d:.4s"><div class="ico">🏢</div><h3>Quem usa</h3><p><b>Uber, Netflix, Microsoft, OpenAI</b>… e, a partir de hoje, a nossa SentimentAPI. 🎬</p></div>
+      <div class="card anim" style="--d:.46s; border-color:rgba(45,212,191,.4)"><div class="ico">🎯</div><h3>Feito para aula</h3><p>Um arquivo, meia dúzia de linhas, e já dá pra <b>rodar, testar e quebrar</b> ao vivo. Perfeito pra hoje.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 5 · INSTALAÇÃO + HELLO WORLD ═══════════ -->
+<section class="slide" id="s4">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">05 · Mão na massa</p>
+      <h2 class="anim" style="--d:.06s">Instalação + <span class="grad">hello world</span></h2>
+    </header>
+    <div class="split b" style="flex:1; align-items:center">
+      <div class="panel anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">terminal</span><span class="lang">bash</span></div>
+        <pre class="code" data-lang="sh">$ pip install fastapi uvicorn</pre>
+      </div>
+      <div class="panel grow anim" style="--d:.2s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">main.py</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def raiz() -&gt; dict:
+    return {"mensagem": "Olá!"}</pre>
+      </div>
+    </div>
+    <div class="chips anim" style="--d:.3s; margin-top:clamp(14px,2.2vh,22px)">
+      <span class="chip"><span class="n">1</span><code>from fastapi import …</code> traz o garçom</span>
+      <span class="chip"><span class="n">2</span><code>app = FastAPI()</code> contrata o garçom</span>
+      <span class="chip"><span class="n">3</span><code>@app.get("/")</code> rota GET na raiz</span>
+      <span class="chip"><span class="n">4</span><code>def raiz()</code> quem atende o pedido</span>
+      <span class="chip"><span class="n">5</span><code>return {…}</code> dict vira JSON</span>
+    </div>
+    <p class="note anim" style="--d:.38s; margin-top:14px">🎉 <b>Isso já é uma API.</b> Um dicionário Python vira <b>JSON sozinho</b> — sem template, sem configuração, sem cerimônia.</p>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 6 · RODANDO ═══════════ -->
+<section class="slide" id="s5">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">06 · Mão na massa</p>
+      <h2 class="anim" style="--d:.06s">Rodando: <span class="grad">uvicorn main:app --reload</span></h2>
+    </header>
+    <div class="split b">
+      <div class="col">
+        <div class="panel anim" style="--d:.14s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">terminal</span><span class="lang">bash</span></div>
+          <pre class="code" data-lang="sh">$ uvicorn main:app --reload</pre>
+        </div>
+        <div class="anat">
+          <div class="row anim" style="--d:.2s"><code class="k">main</code><span class="d">o <b>arquivo</b> main.py (sem o .py)</span></div>
+          <div class="row anim" style="--d:.26s"><code class="k">app</code><span class="d">o <b>objeto</b> FastAPI() que criamos lá dentro</span></div>
+          <div class="row anim" style="--d:.32s"><code class="k">--reload</code><span class="d"><b>hot reload</b>: salvou, recarregou sozinho — deixem ligado na aula</span></div>
+        </div>
+      </div>
+      <div class="col" style="justify-content:center">
+        <div class="urls">
+          <div class="urlc anim" style="--d:.2s"><code>http://127.0.0.1:8000</code><p>a API viva 🌱</p></div>
+          <div class="urlc anim" style="--d:.26s"><code>…:8000/docs</code><p>Swagger interativo — o show de hoje 🤩</p></div>
+          <div class="urlc anim" style="--d:.32s"><code>…:8000/redoc</code><p>documentação alternativa (ReDoc)</p></div>
+          <div class="urlc anim" style="--d:.38s"><code>…:8000/openapi.json</code><p>o contrato em JSON puro 📋</p></div>
+        </div>
+        <p class="note amber anim" style="--d:.44s">O servidor liga em <b>milissegundos</b> e fica observando o arquivo. Errar aqui é barato — e a gente vai errar de propósito já já.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 7 · O MOMENTO UAU: /docs ═══════════ -->
+<section class="slide" id="s6">
+  <div class="inner center">
+    <p class="eyebrow anim">07 · 🤯 O momento uau</p>
+    <div class="docs-big anim" style="--d:.06s">/docs</div>
+    <p class="sub anim" style="--d:.14s; margin:10px auto 0">A <b>documentação interativa que se escreveu sozinha</b> — a partir de docstrings, type hints e classes que já estavam no código.</p>
+    <div class="shot anim" style="--d:.22s">
+      <div class="bar"><div class="d3"><i></i><i></i><i></i></div><div class="urlbox">🔒 127.0.0.1:8000/docs</div></div>
+      <div class="body-shot">
+        <div class="big">📸 COLOCAR AQUI O SCREENSHOT DO /docs</div>
+        <small>Sugestão: Swagger UI da <b>SentimentAPI</b> em tema escuro, com <b>POST /avaliacoes</b> expandido mostrando o schema + o botão <b>Try it out</b> (1280×800). Substitua este quadro por um <span style="font-family:var(--mono)">&lt;img&gt;</span> — até lá, ele pisca bonito.</small>
+      </div>
+    </div>
+    <div class="chips anim" style="--d:.32s; margin-top:clamp(14px,2.2vh,22px)">
+      <span class="chip">📝 <span>docstrings viram <b>&nbsp;descrições&nbsp;</b> de cada rota</span></span>
+      <span class="chip">🏷️ <span>type hints + classes viram <b>&nbsp;esquemas</b> (Schemas, lá embaixo)</span></span>
+      <span class="chip">▶️ <span><b>&nbsp;Try it out&nbsp;</b> — testa tudo aí dentro. Sem Postman, sem Insomnia… e sem insônia.</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 8 · TYPE HINTS = VALIDAÇÃO GRÁTIS ═══════════ -->
+<section class="slide" id="s7">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">08 · Validação</p>
+      <h2 class="anim" style="--d:.06s">Type hints = <span class="grad">validação grátis</span></h2>
+    </header>
+    <div class="split c">
+      <div class="panel grow anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">main.py — parâmetros de rota</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">@app.get("/ola/{nome}")
+def ola(nome: str) -&gt; dict:
+    """Parâmetro de rota: o que vem na URL."""
+    return {"mensagem": f"Olá, {nome}! 👋"}
+
+
+@app.get("/avaliacoes/{id_avaliacao}")
+def buscar_avaliacao(id_avaliacao: int) -&gt; AvaliacaoResposta:
+    """id: int ⇒ /avaliacoes/abc nem chega na função."""
+    if id_avaliacao not in BD_AVALIACOES:
+        raise HTTPException(status_code=404,
+                            detail="Avaliação não existe.")
+    return ...  # a avaliação encontrada</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <ul class="clist anim" style="--d:.2s">
+          <li><span class="cdot"></span><span><code style="font-family:var(--mono);color:var(--teal2)">nome: str</code> diz ao FastAPI <b>o que esperar</b> na rota.</span></li>
+          <li><span class="cdot"></span><span><code style="font-family:var(--mono);color:var(--teal2)">id_avaliacao: int</code> ⇒ <b>/avaliacoes/abc</b> já responde <b>422 na hora</b>.</span></li>
+          <li><span class="cdot"></span><span>Não achou? <b>Nós mesmos</b> levantamos o <b>404</b> com HTTPException.</span></li>
+        </ul>
+        <div class="anim" style="--d:.28s">
+          <span class="http-badge">💥 AO VIVO: POST /avaliacoes com nota = 42</span>
+        </div>
+        <div class="panel anim" style="--d:.34s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">resposta · 422 Unprocessable Entity</span><span class="lang">json</span></div>
+          <pre class="code compact" data-lang="json">{
+  "detail": [
+    {
+      "type": "less_than_equal",
+      "loc": ["body", "nota"],
+      "msg": "Input should be less than or equal to 5",
+      "input": 42,
+      "ctx": { "le": 5 }
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+    </div>
+    <p class="note anim" style="--d:.42s; margin-top:14px">O <b>Field(ge=1, le=5)</b> rejeitou o pedido sozinho: <b>“O FastAPI confere o pedido antes de chegar na cozinha.”</b> 🤵✅</p>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 9 · PYDANTIC = O CONTRATO ═══════════ -->
+<section class="slide" id="s8">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">09 · O contrato</p>
+      <h2 class="anim" style="--d:.06s">Classes Pydantic = <span class="grad">o contrato</span></h2>
+    </header>
+    <div class="split c">
+      <div class="panel grow anim" style="--d:.14s">
+        <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">main.py — os modelos</span><span class="lang">python</span></div>
+        <pre class="code" data-lang="python">class AvaliacaoEntrada(BaseModel):
+    """O que o cliente ENVIA."""
+    texto: str = Field(..., min_length=3, max_length=500,
+                       description="O texto da avaliação do filme")
+    nota: int = Field(..., ge=1, le=5,
+                      description="Nota de 1 a 5 estrelas")
+    autor: str | None = Field(default=None, max_length=60)
+
+
+class AvaliacaoResposta(AvaliacaoEntrada):
+    """O que a API DEVOLVE (herda e acrescenta)."""
+    id: int
+    criada_em: datetime
+    sentimento: str    # positivo | negativo | neutro
+    confianca: float   # de 0 a 1</pre>
+      </div>
+      <div class="col" style="justify-content:center">
+        <ul class="clist anim" style="--d:.2s">
+          <li><span class="cdot"></span><span>A classe define a <b>entrada</b>: cada <b>Field</b> vira validação <i>e</i> descrição <i>e</i> exemplo.</span></li>
+          <li><span class="cdot"></span><span>E também a <b>saída</b>: <code style="font-family:var(--mono);color:var(--teal2)">response_model=AvaliacaoResposta</code> no <b>@app.post</b>.</span></li>
+          <li><span class="cdot"></span><span><b>Herança</b>: a resposta estende a entrada e acrescenta id, sentimento, confiança…</span></li>
+          <li><span class="cdot"></span><span>Tudo aparece <b>modelado no Swagger</b>, seção <b>Schemas</b> — o contrato desenhado.</span></li>
+        </ul>
+        <div class="panel anim" style="--d:.3s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">main.py — amarrando o contrato</span><span class="lang">python</span></div>
+          <pre class="code compact" data-lang="python">@app.post("/avaliacoes",
+          response_model=AvaliacaoResposta,
+          status_code=201)
+def criar_avaliacao(avaliacao: AvaliacaoEntrada):
+    ...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 10 · A MINI-IA ═══════════ -->
+<section class="slide" id="s9">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">10 · A mini-IA</p>
+      <h2 class="anim" style="--d:.06s">A mini-IA: <span class="grad">análise de sentimento</span></h2>
+    </header>
+    <div class="split a">
+      <div class="col" style="justify-content:center">
+        <ul class="clist anim" style="--d:.12s">
+          <li><span class="cdot"></span><span>O <b>léxico</b> é só um dict: <b>palavra → peso</b>. <i>“adorei”</i> +3, <i>“chato”</i> −2…</span></li>
+          <li><span class="cdot"></span><span><b>classificar()</b> tokeniza o texto, soma os pesos das palavras que conhece e dá o veredito.</span></li>
+          <li><span class="cdot"></span><span>A <b>confiança</b> cresce 0,1 por palavra reconhecida (teto 0,99).</span></li>
+        </ul>
+        <div class="anim" style="--d:.22s">
+          <span class="http-badge ok">🎬 “Chato, cansativo, perdi tempo” → −6 → negativo · confiança 0,99</span>
+        </div>
+        <p class="note pink anim" style="--d:.3s">🧸 <b>Confissão honesta:</b> é uma IA de brinquedo — <b>legível linha a linha</b>, sem mistério. Na próxima aula trocamos o léxico por <b>scikit-learn</b>… e <b>a API nem muda de roupa</b>.</p>
+      </div>
+      <div class="col">
+        <div class="panel grow anim" style="--d:.16s">
+          <div class="code-bar"><div class="d3"><i></i><i></i><i></i></div><span class="fname">main.py — o “cérebro”</span><span class="lang">python</span></div>
+          <pre class="code compact" data-lang="python">LEXICO: dict[str, int] = {
+    "adorei": 3, "maravilhoso": 3, "excelente": 3,
+    "emocionante": 2, "chato": -2, "cansativo": -2,
+    "horrível": -3, "perdi": -1, "tempo": -1,
+}
+
+def classificar(texto: str) -&gt; dict:
+    palavras = texto.lower().replace("!", " ").split()
+    encontradas = [(p, LEXICO[p]) for p in palavras if p in LEXICO]
+    pontuacao = sum(peso for _, peso in encontradas)
+
+    if pontuacao &gt; 0:   sentimento = "positivo"   # 😊
+    elif pontuacao &lt; 0: sentimento = "negativo"   # 😩
+    else:               sentimento = "neutro"     # 😐
+
+    total = sum(abs(peso) for _, peso in encontradas)
+    confianca = min(0.99, 0.5 + 0.1 * total)
+    return {"sentimento": sentimento,
+            "pontuacao": pontuacao,
+            "confianca": round(confianca, 2)}</pre>
+        </div>
+        <div class="merm anim" style="--d:.26s; flex:none; height:clamp(96px,15vh,150px)">
+          <pre class="mermaid">
+flowchart LR
+    A["📝 texto"] --&gt; B["🔍 tokenizar"] --&gt; C["⚖️ Σ dos pesos"] --&gt; D["🎭 veredito + confiança"]
+    classDef s fill:#0d1526,stroke:#2dd4bf,stroke-width:2px,color:#c7f9ee,font-size:13px
+    class A,B,C,D s
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 11 · ROTEIRO DA DEMO ═══════════ -->
+<section class="slide" id="s10">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">11 · Ao vivo</p>
+      <h2 class="anim" style="--d:.06s">Roteiro da demo: <span class="grad">8 experimentos</span></h2>
+      <p class="sub anim" style="--d:.12s">Tudo dentro do <b>/docs</b> — se der errado, faz parte do plano pedagógico. 😄</p>
+    </header>
+    <div class="cklist">
+      <div class="ck anim" style="--d:.14s"><span class="ckn">1</span><span class="meth get">GET</span><span class="path">/ola/PUC</span><span class="desc">o primeiro endpoint, com parâmetro de rota</span><span class="res">“Olá, PUC! 👋”</span></div>
+      <div class="ck anim" style="--d:.19s"><span class="ckn">2</span><span class="meth post">POST</span><span class="path">/avaliacoes</span><span class="desc">positivo: <i>“Adorei o filme, emocionante do início ao fim!”</i></span><span class="res">201 · positivo</span></div>
+      <div class="ck anim" style="--d:.24s"><span class="ckn">3</span><span class="meth post">POST</span><span class="path">/avaliacoes</span><span class="desc">negativo: <i>“Chato, cansativo, perdi tempo”</i></span><span class="res">201 · negativo (−6)</span></div>
+      <div class="ck anim" style="--d:.29s"><span class="ckn">4</span><span class="meth post">POST</span><span class="path">/avaliacoes <em>com nota=42</em></span><span class="desc">a validação em ação: Field(ge=1, le=5) recusa</span><span class="res bad">💥 422</span></div>
+      <div class="ck anim" style="--d:.34s"><span class="ckn">5</span><span class="meth get">GET</span><span class="path">/avaliacoes?sentimento=positivo</span><span class="desc">filtro por query string — só as boas</span><span class="res">😄 só elogios</span></div>
+      <div class="ck anim" style="--d:.39s"><span class="ckn">6</span><span class="meth get">GET</span><span class="path">/predizer?texto=Filme maravilhoso, adorei demais</span><span class="desc">a IA solta, sem cadastro</span><span class="res">positivo · 0,99</span></div>
+      <div class="ck anim" style="--d:.44s"><span class="ckn">7</span><span class="meth get">GET</span><span class="path">/avaliacoes/999</span><span class="desc">id inexistente → o 404 que nós mesmos levantamos</span><span class="res bad">🚫 404</span></div>
+      <div class="ck anim" style="--d:.49s"><span class="ckn">8</span><span class="meth get">GET</span><span class="path">/estatisticas</span><span class="desc">contagem por sentimento + nota média — o painel de dados</span><span class="res">📊 fim do show</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SLIDE 12 · PARA CASA ═══════════ -->
+<section class="slide" id="s11">
+  <div class="inner">
+    <header class="shead">
+      <p class="eyebrow anim">12 · Para casa</p>
+      <h2 class="anim" style="--d:.06s">Próximos passos <span class="grad">(a API quase não muda)</span></h2>
+    </header>
+    <div class="split b">
+      <div class="col" style="justify-content:center">
+        <ul class="nexts">
+          <li class="anim" style="--d:.14s"><span class="ico">🔁</span><span><b>Trocar o léxico por scikit-learn</b> — só a função <code style="font-family:var(--mono);color:var(--teal2)">classificar()</code> muda; os endpoints ficam.</span></li>
+          <li class="anim" style="--d:.2s"><span class="ico">💾</span><span><b>Persistir em SQLite com SQLModel</b> — adeus, dict em memória (a API esquece tudo ao reiniciar…). </span></li>
+          <li class="anim" style="--d:.26s"><span class="ico">⏩</span><span><b>async / await</b> — endpoints que respiram quando a coisa demora.</span></li>
+          <li class="anim" style="--d:.32s"><span class="ico">🐳</span><span><b>Deploy com Docker</b> — a API no ar de verdade, fora do notebook.</span></li>
+          <li class="anim" style="--d:.38s"><span class="ico">🤖</span><span><b>Um LLM no lugar do classificador</b> — a assinatura continua a mesma; só o cérebro troca.</span></li>
+        </ul>
+      </div>
+      <div class="col center anim" style="--d:.3s; border:1px solid var(--line); border-radius:18px; background:linear-gradient(180deg,var(--panel2),var(--bg2)); padding:clamp(16px,3vh,30px)">
+        <p class="quote">“A documentação<br>é o código.”</p>
+        <div class="rule" style="margin:18px auto"></div>
+        <p class="body" style="max-width:40ch">Se o código muda, a doc muda junto — <b>porque é o mesmo arquivo</b>. Não existe doc velha; existe doc.</p>
+        <p class="body big" style="margin-top:18px">Obrigado, PUC! 🎬✨</p>
+        <p class="credit" style="margin-top:8px">Ricardo da Costa · prof. Leonardo Afonso · SentimentAPI 🍿</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+/* ═════════════ SYNTAX HIGHLIGHT (feito à mão) ═════════════ */
+const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+const PYRE = /(#[^\n]*)|("""[\s\S]*?"""|'''[\s\S]*?''')|([fFrRbBuU]{0,2}"(?:[^"\\\n]|\\.)*"|[fFrRbBuU]{0,2}'(?:[^'\\\n]|\\.)*')|(@[A-Za-z_][\w.]*)|\b(from|import|def|class|return|if|elif|else|for|while|in|not|and|or|is|None|True|False|global|raise|try|except|finally|with|as|lambda|yield|pass|break|continue|async|await)\b|\b(int|str|float|bool|dict|list|tuple|set|len|sum|abs|round|min|max|print|range)\b|\b(FastAPI|BaseModel|Field|HTTPException|AvaliacaoEntrada|AvaliacaoResposta|LEXICO|BD_AVALIACOES|datetime|timezone)\b|(\b\d+(?:\.\d+)?\b)/g;
+
+function hlPython(src){
+  let out = '', last = 0, m;
+  PYRE.lastIndex = 0;
+  while((m = PYRE.exec(src))){
+    out += esc(src.slice(last, m.index));
+    const cls = m[1] ? 'tok-com' : (m[2] || m[3]) ? 'tok-str' : m[4] ? 'tok-dec'
+              : m[5] ? 'tok-kw' : m[6] ? 'tok-bi' : m[7] ? 'tok-ty' : 'tok-num';
+    out += '<span class="' + cls + '">' + esc(m[0]) + '</span>';
+    last = m.index + m[0].length;
+  }
+  out += esc(src.slice(last));
+  /* nomes após def/class */
+  out = out.replace(/(<span class="tok-kw">def<\/span>\s+)([A-Za-z_]\w*)/g, '$1<span class="tok-fn">$2</span>');
+  out = out.replace(/(<span class="tok-kw">class<\/span>\s+)([A-Za-z_]\w*)/g, '$1<span class="tok-cls">$2</span>');
+  return out;
+}
+
+function hlShell(src){
+  return src.split('\n').map(line => {
+    if(!line.trim()) return '';
+    if(line.trim().startsWith('#')) return '<span class="tok-com">' + esc(line) + '</span>';
+    const m = line.match(/^(\s*\$\s?)(.*)$/);
+    const prompt = m ? '<span class="tok-p">' + esc(m[1]) + '</span>' : '';
+    let body = esc(m ? m[2] : line);
+    body = body.replace(/(--[\w-]+)/g, '<span class="tok-dec">$1</span>');
+    body = body.replace(/^([A-Za-z_][\w.-]*)/, '<span class="tok-ty">$1</span>');
+    body = body.replace(/\b([\w.-]+:[\w.-]+)\b/g, '<span class="tok-mod">$1</span>');
+    return prompt + body;
+  }).join('\n');
+}
+
+function hlJSON(src){
+  const re = /("(?:[^"\\]|\\.)*")(\s*:)?|(-?\d+(?:\.\d+)?)|\b(true|false|null)\b/g;
+  let out = '', last = 0, m;
+  while((m = re.exec(src))){
+    out += esc(src.slice(last, m.index));
+    if(m[1]) out += m[2]
+      ? '<span class="tok-ty">' + esc(m[1]) + '</span>' + esc(m[2])
+      : '<span class="tok-str">' + esc(m[1]) + '</span>';
+    else if(m[3]) out += '<span class="tok-num">' + esc(m[3]) + '</span>';
+    else out += '<span class="tok-kw">' + esc(m[4]) + '</span>';
+    last = m.index + m[0].length;
+  }
+  return out + esc(src.slice(last));
+}
+
+function highlightAll(){
+  document.querySelectorAll('pre.code').forEach(pre => {
+    const lang = pre.dataset.lang || 'python';
+    const fn = lang === 'sh' ? hlShell : lang === 'json' ? hlJSON : hlPython;
+    pre.innerHTML = fn(pre.textContent.replace(/^\n+/, ''));
+  });
+}
+
+/* ═════════════ MERMAID + PAN/ZOOM ═════════════ */
+const PZS = [];
+
+function initPZ(){
+  document.querySelectorAll('.merm').forEach(box => {
+    const pre = box.querySelector('pre.mermaid');
+    if(!pre || pre.dataset.pz) return;
+    pre.dataset.pz = '1';
+    const svg = pre.querySelector('svg');
+    if(!svg) return;
+    svg.style.maxWidth = 'none';
+    svg.removeAttribute('width');
+    svg.style.height = 'auto';
+    pre.style.position = 'absolute';
+    pre.style.left = '50%'; pre.style.top = '50%';
+    pre.style.margin = '0';
+    pre.style.transformOrigin = '50% 50%';
+
+    const r0 = svg.getBoundingClientRect();
+    const vb = svg.viewBox && svg.viewBox.baseVal;
+    const natW = (vb && vb.width) || r0.width || 600;
+    const natH = (vb && vb.height) || r0.height || 300;
+
+    let base = 1, z = 1, px = 0, py = 0;
+    const apply = () => {
+      pre.style.transform = 'translate(-50%,-50%) translate(' + px + 'px,' + py + 'px) scale(' + (base * z).toFixed(3) + ')';
+    };
+    const fit = () => {
+      const bw = box.clientWidth - 30, bh = box.clientHeight - 30;
+      base = Math.min(bw / natW, bh / natH, 1);
+      apply();
+    };
+    fit();
+
+    box.addEventListener('wheel', e => {
+      e.preventDefault();
+      z = Math.max(0.35, Math.min(3, z * (e.deltaY < 0 ? 1.12 : 0.89)));
+      apply();
+    }, { passive: false });
+
+    let drag = null;
+    box.addEventListener('pointerdown', e => {
+      drag = { x: e.clientX, y: e.clientY };
+      box.setPointerCapture(e.pointerId);
+    });
+    box.addEventListener('pointermove', e => {
+      if(!drag) return;
+      px += e.clientX - drag.x; py += e.clientY - drag.y;
+      drag = { x: e.clientX, y: e.clientY };
+      apply();
+    });
+    box.addEventListener('pointerup', () => { drag = null; });
+    box.addEventListener('pointercancel', () => { drag = null; });
+    box.addEventListener('dblclick', () => { z = 1; px = 0; py = 0; apply(); });
+
+    const ctrl = document.createElement('div');
+    ctrl.className = 'dctrl';
+    const mk = (label, fn) => {
+      const b = document.createElement('button');
+      b.textContent = label; b.title = label;
+      b.addEventListener('click', fn);
+      ctrl.appendChild(b);
+    };
+    mk('+', () => { z = Math.min(3, z * 1.2); apply(); });
+    mk('−', () => { z = Math.max(0.35, z / 1.2); apply(); });
+    mk('⤢', () => { z = 1; px = 0; py = 0; fit(); });
+    box.appendChild(ctrl);
+
+    PZS.push(fit);
+  });
+}
+
+/* ═════════════ NAVEGAÇÃO ═════════════ */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const N = slides.length;
+const dotsBox = document.getElementById('dots');
+const snum = document.getElementById('snum');
+const progress = document.getElementById('progress');
+const al = document.getElementById('al');
+const ar = document.getElementById('ar');
+let cur = 0;
+
+const dots = [];
+for(let i = 0; i < N; i++){
+  const b = document.createElement('button');
+  b.setAttribute('aria-label', 'slide ' + (i + 1));
+  b.addEventListener('click', () => go(i));
+  dotsBox.appendChild(b);
+  dots.push(b);
+}
+
+function go(i){
+  cur = Math.max(0, Math.min(N - 1, i));
+  slides.forEach((s, idx) => s.classList.toggle('active', idx === cur));
+  snum.textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
+  progress.style.width = ((cur + 1) / N * 100) + '%';
+  dots.forEach((d, idx) => d.classList.toggle('on', idx === cur));
+  al.disabled = cur === 0;
+  ar.disabled = cur === N - 1;
+}
+
+document.addEventListener('keydown', e => {
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){ e.preventDefault(); go(cur + 1); }
+  else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); go(cur - 1); }
+  else if(e.key === 'Home'){ go(0); }
+  else if(e.key === 'End'){ go(N - 1); }
+});
+al.addEventListener('click', () => go(cur - 1));
+ar.addEventListener('click', () => go(cur + 1));
+
+let touchX = null, touchY = null;
+document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if(touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  const dy = e.changedTouches[0].clientY - touchY;
+  if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+  touchX = null;
+}, { passive: true });
+
+window.addEventListener('resize', () => PZS.forEach(f => f()));
+
+/* ═════════════ BOOT ═════════════ */
+document.addEventListener('DOMContentLoaded', async () => {
+  highlightAll();
+  go(0);
+  if(window.mermaid){
+    try{
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        securityLevel: 'loose',
+        themeVariables: {
+          background: '#05070f',
+          primaryColor: '#101a33',
+          primaryTextColor: '#e9effc',
+          primaryBorderColor: '#a78bfa',
+          secondaryColor: '#0b1a2e',
+          tertiaryColor: '#0d0b20',
+          lineColor: '#2dd4bf',
+          textColor: '#c9d6f2',
+          edgeLabelBackground: '#0a0f1e',
+          fontSize: '15px',
+          fontFamily: 'Inter, sans-serif'
+        },
+        flowchart: { useMaxWidth: false, curve: 'basis', nodeSpacing: 40, rankSpacing: 48, padding: 12 }
+      });
+      await mermaid.run({ querySelector: 'pre.mermaid' });
+    } catch(err){
+      console.warn('mermaid falhou (offline?):', err);
+    }
+  }
+  initPZ();
+});
+</script>
+</body>
+</html>
